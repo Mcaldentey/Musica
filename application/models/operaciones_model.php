@@ -8,6 +8,23 @@ class Operaciones_model extends CI_Model {
 
 		$this->db->where('username', $username);
 		$this->db->update('users', $data); 
+
+		$this->insertar_alta($username);
+	}
+
+	public function insertar_alta($username){
+		$this->db->select('user_id, phone');
+		$this->db->where('username', $username);
+		$user = $this->db->get('users')->row();
+
+
+		$data = array('user_id' => $user->user_id,
+			'phone' => $user->phone,
+			'fecha' => date('Y-m-d H:i:s')
+			) ;
+
+		$this->db->insert('altas', $data); 
+
 	}
 
 	public function baja($username){
@@ -17,6 +34,23 @@ class Operaciones_model extends CI_Model {
 
 		$this->db->where('username', $username);
 		$this->db->update('users', $data); 
+
+		$this->insertar_baja($username);
+	}
+
+	public function insertar_baja($username){
+		$this->db->select('user_id, phone');
+		$this->db->where('username', $username);
+		$user = $this->db->get('users')->row();
+
+
+		$data = array('user_id' => $user->user_id,
+			'phone' => $user->phone,
+			'fecha' => date('Y-m-d H:i:s')
+			) ;
+
+		$this->db->insert('bajas', $data); 
+
 	}
 
 	public function cambiar_telefono($username, $phone){
