@@ -12,9 +12,15 @@ class Users_model extends CI_Model {
     	return $this->db->get('users')->row();
     }
 
+<<<<<<< HEAD
     public function datos_usuario($usuario){
     	$this->db->select('saldo, phone, active');
     	$this->db->where('username', $usuario);
+=======
+    public function datos_usuario($username){
+    	$this->db->select('saldo, phone, active');
+    	$this->db->where('username', $username);
+>>>>>>> alta_bbdd
         return $this->db->get('users')->row();
     }
 }
