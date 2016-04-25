@@ -3,6 +3,7 @@ class Users extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
 		date_default_timezone_set('Europe/Madrid');
+		$this->load->library('validation');
 		$this->load->model('users_model');
 	}
 
@@ -31,6 +32,7 @@ class Users extends CI_Controller {
 			$this->crear_session($username);
 			redirect(base_url());
 		} else {
+
 			$this->load->view('entrar', array('error'=>TRUE)); //Si el usuario no existe devuelve un error
 		}
 
@@ -50,8 +52,10 @@ class Users extends CI_Controller {
 		$password = $this->input->post('password');
 		$phone = $this->input->post('phone');
 		$tarjeta = $this->input->post('tarjeta');
-		$tarjeta_crc = $this->input->post('crc');		
+		$tarjeta_crc = $this->input->post('crc');	
+
 		
+
 		$user = array(                                			
 			'username' => $username,
 			'email' => $email,
@@ -60,11 +64,12 @@ class Users extends CI_Controller {
 			'tarjeta' => hash('sha256', $tarjeta),
 			'tarjeta_crc' => $tarjeta_crc
 			);
-		if($this -> users_model -> insert_user('users', $user)){                        
+		if($this->users_model->insert_user('users', $user)){                        
 			$this->crear_session($username);
 			redirect(base_url());
 		} else {
-
+			$this->load->view('registro', array('error'=>TRUE));
+			
 		}
 	}
 
@@ -74,4 +79,5 @@ class Users extends CI_Controller {
 		$this->load->view('cuenta', $data);
 
 	}
+
 }

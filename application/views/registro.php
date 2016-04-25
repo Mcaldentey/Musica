@@ -19,7 +19,11 @@
 
     <header>
         <div class="header-content">
-            <div class="header-content-inner">                    
+            <div class="header-content-inner">   
+
+            <?php if(isset($fallo)) {
+                echo '<p style="background-color:black; display: inline-flex; color:white">'.$tipo.'</p>';
+            };?>                 
                 <div class="container">
                     <div class="col-md-4">
                         <p style="color: white; font-size: 25px">Nombre de usuario:*</p>
@@ -31,12 +35,12 @@
 
                     <div class="col-md-4">
                         <?=form_open(base_url().'users/new_user/')?> <!-- Open an input to register an user  -->                    
-                        <p><?= form_input('username', '', 'required style="color:black;" placeholder="Nombre de usuario"') ?></p>
-                        <p><?= form_input('email', '', 'required style="color:black;" placeholder="Email"') ?></p>
-                        <p><?=form_password('password', '', 'required style="color:black;" placeholder="Password"')?></p>
-                        <p><?= form_input('phone', '', 'required style="color:black;" placeholder="Nº Teléfono"') ?></p>
-                        <p><?= form_input('tarjeta', '', 'required style="color:black;" placeholder="Nº Tarjeta"')?>
-                        <?= form_input('crc', '', 'required style="color:black;" placeholder="CRC"')?>
+                        <p><?= form_input('username', '', 'required style="color:black;" placeholder="Nombre de usuario" pattern=".{5,20}"') ?></p>
+                        <p><?= form_input('email', '', 'required style="color:black;" placeholder="Email" pattern=".{10,50}"') ?></p>
+                        <p><?=form_password('password', '', 'required style="color:black;" placeholder="Password" pattern=".{3,15}"')?></p>
+                        <p><div style="color:white; background-color: black; display: inline-flex; ">+34</div> <?= form_input('phone', '', 'required style="color:black;" placeholder="Nº Teléfono" pattern=".{9}"') ?></p>
+                        <p><?= form_input('tarjeta', '', 'required style="color:black;" placeholder="Nº Tarjeta" pattern=".{16}"')?>
+                        <?= form_input('crc', '', 'required style="color:black;" placeholder="CRC" pattern=".{3}"')?>
                         </p>
                         <?=form_submit('submit', 'Registrarse', 'class="btn btn-primary btn-xl page-scroll"')?> <!-- Submit the form -->
 

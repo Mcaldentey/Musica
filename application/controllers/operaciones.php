@@ -32,4 +32,5 @@ class Operaciones extends CI_Controller {
 		redirect(base_url().'users/cuenta');
 
 	}
+		
 }
