@@ -29,8 +29,8 @@
 
                     <div class="col-md-4">
                         <?=form_open(base_url().'users/comprobar_login/')?> <!-- Open an input to register an user  -->                    
-                        <p><?= form_input('username', '', 'required style="color:black;"') ?></p>
-                        <p><?=form_password('password', '', 'required style="color:black;"')?></p>
+                        <p><?= form_input('username', '', 'required style="color:black;" pattern=".{5,20}"') ?></p>
+                        <p><?=form_password('password', '', 'required style="color:black;" pattern=".{3,15}"')?></p>
                         <?=form_submit('submit', 'Entrar', 'class="btn btn-primary btn-xl page-scroll"')?> <!-- Submit the form -->
 
                     </div>
