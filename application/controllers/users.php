@@ -2,8 +2,7 @@
 class Users extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
-		date_default_timezone_set('Europe/Madrid');
-		$this->load->library('validation');
+		date_default_timezone_set('Europe/Madrid');		
 		$this->load->model('users_model');
 	}
 

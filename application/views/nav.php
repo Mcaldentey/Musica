@@ -53,6 +53,9 @@
                     <ul class="nav navbar-nav navbar-right">
                         <?php if ($this->session->userdata('is_logged_in')) : ?>
                             <li>
+                            <a class="page-scroll" href="<?=base_url()?>web_service/web_service_call">Test</a>
+                            </li> 
+                            <li>
                             <a class="page-scroll" href="<?=base_url()?>users/cuenta">Tu cuenta</a>
                             </li>                          
                             <li>

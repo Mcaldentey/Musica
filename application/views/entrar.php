@@ -20,7 +20,7 @@
     <header>
         <div class="header-content">
             <div class="header-content-inner">        
-            <?php echo (isset($error)) ? '<p>Credenciales incorrectas!</p>' : '';?>   
+                <?php echo (isset($error)) ? '<p>Credenciales incorrectas!</p>' : '';?>   
                 <div class="container">
                     <div class="col-md-4">
                         <p style="color: white; font-size: 25px">Nombre de usuario: *</p>
@@ -36,24 +36,25 @@
                     </div>
 
                 </div>
-            </header>
+            </div>
+        </div>
+    </header>
 
 
 
-            <!-- jQuery -->
-            <script src="<?=base_url()?>assets/js/jquery.js"></script>
+    <!-- jQuery -->
+    <script src="<?=base_url()?>assets/js/jquery.js"></script>
 
-            <!-- Bootstrap Core JavaScript -->
-            <script src="<?=base_url()?>assets/js/bootstrap.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="<?=base_url()?>assets/js/bootstrap.min.js"></script>
 
-            <!-- Plugin JavaScript -->
-            <script src="<?=base_url()?>assets/js/jquery.easing.min.js"></script>
-            <script src="<?=base_url()?>assets/js/jquery.fittext.js"></script>
-            <script src="<?=base_url()?>assets/js/wow.min.js"></script>
+    <!-- Plugin JavaScript -->
+    <script src="<?=base_url()?>assets/js/jquery.easing.min.js"></script>
+    <script src="<?=base_url()?>assets/js/jquery.fittext.js"></script>
+    <script src="<?=base_url()?>assets/js/wow.min.js"></script>
 
-            <!-- Custom Theme JavaScript -->
-            <script src="<?=base_url()?>assets/js/creative.js"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="<?=base_url()?>assets/js/creative.js"></script>
 
-        </body>
-
-        </html>
+</body>
+</html>
