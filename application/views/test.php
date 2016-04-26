@@ -19,6 +19,9 @@
 
     <?php echo '<p>'.$output.'</p>'; ?>
     <?php echo '<p>'.$token.'</p>'; ?>
+    <?php echo '<p>'.$cobro.'</p>'; ?>
+    <?php echo '<p>'.$sms.'</p>'; ?>
+    
    
 
 

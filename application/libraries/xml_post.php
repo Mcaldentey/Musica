@@ -40,14 +40,14 @@ class Xml_post {
 
 	public function http_post($URL, $xml){
 		
-		$ch = curl_init($URL);
-		curl_setopt($ch, CURLOPT_USERPWD, 'mcaldentey' . ":" . '8yFqL8Qx');
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
-		curl_setopt($ch, CURLOPT_POSTFIELDS, "$xml");
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$output = curl_exec($ch);
-		curl_close($ch);
+		$conexion = curl_init($URL);
+		curl_setopt($conexion, CURLOPT_USERPWD, 'mcaldentey' . ":" . '8yFqL8Qx');
+		curl_setopt($conexion, CURLOPT_POST, 1);
+		curl_setopt($conexion, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
+		curl_setopt($conexion, CURLOPT_POSTFIELDS, "$xml");
+		curl_setopt($conexion, CURLOPT_RETURNTRANSFER, 1);
+		$output = curl_exec($conexion);
+		curl_close($conexion);
 
 		return $output;
 	}
