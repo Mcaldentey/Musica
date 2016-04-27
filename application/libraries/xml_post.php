@@ -1,9 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No se permite el acceso directo al script');
-
 class Xml_post {
-
 	public function get_xml_sms($text, $msisdn,$transaction){
-
 		$xml_data ='<?xml version="1.0" encoding="UTF-8"?>'.
 		'<request>'.				
 		'<shortcode>'.'+34'.'</shortcode>'.
@@ -11,12 +8,9 @@ class Xml_post {
 		'<msisdn>'.$msisdn.'</msisdn>'.
 		'<transaction>'.$transaction.'</transaction>'.
 		'</request>';
-
 		return $xml_data;
 	}
-
 	public function get_xml_cobro($transaction, $msisdn, $token){
-
 		$xml_data ='<?xml version="1.0" encoding="UTF-8"?>'.
 		'<request>'.
 		'<transaction>'.$transaction.'</transaction>'.		
@@ -24,20 +18,15 @@ class Xml_post {
 		'<amount>'.'2'.'</amount>'.
 		'<token>'.$token.'</token>'.
 		'</request>';
-
 		return $xml_data;
 	}
-
 	public function get_xml_token($transaction){
-
 		$xml_data ='<?xml version="1.0" encoding="UTF-8"?>'.
 		'<request>'.
 		'<transaction>'.$transaction.'</transaction>'.
 		'</request>';
-
 		return $xml_data;
 	}
-
 	public function http_post($URL, $xml){
 		
 		$conexion = curl_init($URL);
@@ -48,12 +37,8 @@ class Xml_post {
 		curl_setopt($conexion, CURLOPT_RETURNTRANSFER, 1);
 		$output = curl_exec($conexion);
 		curl_close($conexion);
-
 		return $output;
 	}
 	
 }
-
 ?>
-
-
