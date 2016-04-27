@@ -52,12 +52,15 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav navbar-right">
                         <?php if ($this->session->userdata('is_logged_in')) : ?>
-                            <li>
-                            <a class="page-scroll" href="<?=base_url()?>web_service/web_service_call">Test</a>
-                            </li> 
-                            <li>
-                            <a class="page-scroll" href="<?=base_url()?>users/cuenta">Tu cuenta</a>
-                            </li>                          
+                            <?php if ($this->session->userdata('admin')) : ?>
+                                <li>
+                                    <a data-toggle="modal" data-target="#modalSms" class="page-scroll">Enviar SMS</a>
+                                </li>
+                            <?php else : ?>
+                                <li>
+                                    <a class="page-scroll" href="<?=base_url()?>users/cuenta">Tu cuenta</a>
+                                </li> 
+                            <?php endif; ?>                            
                             <li>
                                 <a class="page-scroll" href="<?=base_url()?>users/salir">Desconectar</a>
                             </li>  
@@ -65,7 +68,7 @@
                             <li>
                                 <a class="page-scroll" href="<?=base_url()?>users/entrar">Miembros</a>
                             </li>      
-                        <?php endif; ?>     
+                        <?php endif; ?>
                     </ul>
                 </div>
                 <!-- /.navbar-collapse -->
@@ -74,7 +77,8 @@
         </nav>
 
 
+    </div>
 
-    </body>
+</body>
 
-    </html>
+</html>

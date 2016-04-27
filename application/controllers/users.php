@@ -38,9 +38,17 @@ class Users extends CI_Controller {
 	}
 
 	public function crear_session($username){
+
+		$admin = 0;
+		if ($admin = $this->users_model->is_admin($username)){
+			$admin = 1;
+		}
+
+		
 		$session = array(
 			'username' => $username,				
-			'is_logged_in' => TRUE,                        
+			'is_logged_in' => TRUE,
+			'admin' => 1
 			);
 		$this -> session -> set_userdata($session);
 	}
