@@ -62,24 +62,26 @@ class Web_service extends CI_Controller {
 
 			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
 			$this->requests_model->insert_cobro_req(
-				$transaccion,
-				$phone,
-				2,
-				$token,
-				$user_id
-				);
-			
-			$this->requests_model->insert_cobro_res(
-				$rsp_cobro->txId,
-				$rsp_cobro->statusCode,
-				$rsp_cobro->statusMessage,
-				$transaccion
-				);
-
-			// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
-			$transaccion = $this->requests_model->get_transaccion();
+					$transaccion,
+					$phone,
+					2,
+					$token,
+					$user_id
+					);
 
 			if (! strcmp($cobro_status_code, 'SUCCESS')) {
+				// ACCIONES A REALIZAR SI EL COBRO HA SIDO CORRECTO
+
+				// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
+				$this->requests_model->insert_cobro_res(
+					$rsp_cobro->txId,
+					$rsp_cobro->statusCode,
+					$rsp_cobro->statusMessage,
+					$transaccion
+					);
+
+				// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
+				$transaccion = $this->requests_model->get_transaccion();
 
 				//SI SE HA REALIZADO EL COBRO CORRECTAMENTE, SE ACTUALIZA EL SALDO Y SE ENVIA EL SMS
 				$baja = $this->requests_model->update_saldo($user_id);
@@ -95,7 +97,7 @@ class Web_service extends CI_Controller {
 				$rsp_sms = new SimpleXMLElement($mnsj_sms);
 				$sms_status_code = $rsp_sms->statusCode;
 
-			// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
+				// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
 				$transaccion = $this->requests_model->get_transaccion();
 				
 
@@ -113,20 +115,16 @@ class Web_service extends CI_Controller {
 					$rsp_sms->statusCode,
 					$rsp_sms->statusMessage,
 					$transaccion
-					);
-
-
+					);	
 			} else {
-
-				$this->requests_model->insert_sms_req(
-					$transaccion,
-					'+34',
-					'ERROR EN EL COBRO, SMS NO ENVIADO',
-					$phone,
-					$user_id
+				// EN EL CASO QUE VAYA MAL EL COBRO, NO SE ENVÍA EL SMS Y SE DEJA CONSTANCIA EN LA BBDD
+				$this->requests_model->insert_cobro_res(
+					$rsp_cobro->txId,
+					$rsp_cobro->statusCode,
+					$rsp_cobro->statusMessage.' SMS NO ENVIADO',
+					$transaccion
 					);
-			}		
-
+			}
 		}
 		redirect(base_url());
 	}
