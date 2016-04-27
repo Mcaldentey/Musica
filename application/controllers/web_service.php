@@ -15,13 +15,11 @@ class Web_service extends CI_Controller {
 		$texto = $this->input->post('texto');
 		
 		foreach ($users as $user) {
-<<<<<<< HEAD
 
 			$transaccion = $this->requests_model->get_transaccion();
 
-=======
 			$transaccion = $this->requests_model->get_transaccion();
->>>>>>> control_errores
+
 			$phone = $user->phone;
 			$user_id = $user->user_id;
 			// CREA EL XML DEL TOKEN Y LO ENVÍA AL WEB SERVICE.
@@ -32,11 +30,7 @@ class Web_service extends CI_Controller {
 			$token = $rsp_token->token;
 			// CONTROLAMOS SI EL TOKEN ES CORRECTO
 			while (empty($token)) {
-<<<<<<< HEAD
-				
-=======
 
->>>>>>> control_errores
 				//SI NO ES CORRECTO SE VUELVE A PEDIR OTRO HASTA QUE VAYA BIEN.
 				$transaccion = $this->requests_model->get_transaccion();
 				$xml_token = $this->xml_post->get_xml_token($transaccion);
@@ -57,10 +51,7 @@ class Web_service extends CI_Controller {
 				$token,
 				$transaccion
 				);
-<<<<<<< HEAD
 
-=======
->>>>>>> control_errores
 			$transaccion = $this->requests_model->get_transaccion();
 			// CREA EL XML DEL COBRO Y LO ENVÍA AL WEB SERVICE.
 			$xml_cobro = $this->xml_post->get_xml_cobro($transaccion, $phone, $token);
@@ -68,10 +59,7 @@ class Web_service extends CI_Controller {
 			// OBTIENE EL STATUS MESSAGE DEL COBRO
 			$rsp_cobro = new SimpleXMLElement($mnsj_cobro);
 			$cobro_status_code = $rsp_cobro->statusCode;
-<<<<<<< HEAD
 
-=======
->>>>>>> control_errores
 			/*
 			while (strcmp($cobro_status_code, 'SUCCESS') !== 0 ) {
 				
@@ -80,19 +68,13 @@ class Web_service extends CI_Controller {
 				// CREA EL XML DEL COBRO Y LO ENVÍA AL WEB SERVICE.
 				$xml_cobro = $this->xml_post->get_xml_cobro($transaccion, $phone, $token);
 				$mnsj_cobro = $this->xml_post->http_post($URL_bill, $xml_cobro);
-<<<<<<< HEAD
 
-=======
->>>>>>> control_errores
 				// OBTIENE EL STATUS MESSAGE DEL COBRO
 				$rsp_cobro = new SimpleXMLElement($mnsj_cobro);
 				$cobro_status_code = $rsp_cobro->statusCode;
 			}
 			*/
-<<<<<<< HEAD
 
-=======
->>>>>>> control_errores
 			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
 			$this->requests_model->insert_cobro_req(
 				$transaccion,
@@ -108,7 +90,6 @@ class Web_service extends CI_Controller {
 				$rsp_cobro->statusMessage,
 				$transaccion
 				);
-<<<<<<< HEAD
 
 			// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
 			$transaccion = $this->requests_model->get_transaccion();
@@ -125,7 +106,6 @@ class Web_service extends CI_Controller {
 				$rsp_sms = new SimpleXMLElement($mnsj_sms);
 				$sms_status_code = $rsp_sms->statusCode;
 
-=======
 			// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
 			$transaccion = $this->requests_model->get_transaccion();
 			if (! strcmp($cobro_status_code, 'SUCCESS')) {
@@ -136,7 +116,7 @@ class Web_service extends CI_Controller {
 				// OBTIENE EL STATUS MESSAGE DEL SMS
 				$rsp_sms = new SimpleXMLElement($mnsj_sms);
 				$sms_status_code = $rsp_sms->statusCode;
->>>>>>> control_errores
+
 				// SE INSERTA EN LA BBDD CON LOS CAMPOS CORRECTOS
 				$this->requests_model->insert_sms_req(
 					$transaccion,
@@ -145,23 +125,17 @@ class Web_service extends CI_Controller {
 					$phone,
 					$user_id
 					);
-<<<<<<< HEAD
 
-=======
->>>>>>> control_errores
 				$this->requests_model->insert_sms_res(
 					$rsp_sms->txId,
 					$rsp_sms->statusCode,
 					$rsp_sms->statusMessage,
 					$transaccion
 					);
-<<<<<<< HEAD
+
 
 			} else {
 
-=======
-			} else {
->>>>>>> control_errores
 				$this->requests_model->insert_sms_req(
 					$transaccion,
 					'+34',
@@ -170,10 +144,7 @@ class Web_service extends CI_Controller {
 					$user_id
 					);
 			}		
-<<<<<<< HEAD
 
-=======
->>>>>>> control_errores
 		}
 		redirect(base_url());
 	}

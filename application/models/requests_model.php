@@ -8,17 +8,13 @@ class Requests_model extends CI_Model {
         $this->db->where('saldo >=', $saldo);
         return $this->db->get('users')->result();
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> control_errores
     public function get_transaccion(){
         $this->db->select('transaccion');
         $transaccion = $this->db->get('transaccion')->row()->transaccion;
         $this->update_transaccion($transaccion);
         return $transaccion;
     }
-<<<<<<< HEAD
 
     public function update_transaccion($transaccion){
         $nuevo = $transaccion + 1; 
@@ -27,13 +23,12 @@ class Requests_model extends CI_Model {
         $this->db->update('transaccion', $data); 
     }
 
-=======
     public function update_transaccion($transaccion){
         $nuevo = $transaccion + 1; 
         $data = array('transaccion' => $nuevo);
         $this->db->update('transaccion', $data); 
     }
->>>>>>> control_errores
+    
     public function insert_token_req($transaction, $user_id){
         $token_request = array(
             'transaction' => $transaction,            
