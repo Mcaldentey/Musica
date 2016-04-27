@@ -44,6 +44,23 @@
     <!-- Custom Theme JavaScript -->
     <script src="<?=base_url()?>assets/js/creative.js"></script>
 
+    <div id="modalSms" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Enviar SMS</h4>
+                </div>
+                <div class="modal-body">
+                    <?=form_open(base_url().'web_service/web_service_call/')?> <!-- Open an input to register an user  -->                    
+                    <p><?= form_input('texto', '', 'required style="color:black;" placeholder="Contenido del SMS"') ?></p>                        
+                    <?=form_submit('submit', 'Enviar', 'class="btn btn-primary btn-xl page-scroll"')?> <!-- Submit the form -->
+                </div>               
+            </div>
+        </div>
+    </div>   
 </body>
 
 </html>

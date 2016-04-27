@@ -12,9 +12,10 @@ class Web_service extends CI_Controller {
 		$URL_bill = "http://52.30.94.95/bill";
 
 		$users = $this->requests_model->select_active();
-		$texto = 'Texto de prueba';
+		$texto = $this->input->post('texto');
 		
 		foreach ($users as $user) {
+
 			$transaccion = $this->xml_post->get_transaction();
 
 			$phone = $user->phone;
@@ -27,6 +28,18 @@ class Web_service extends CI_Controller {
 			// OBTIENE EL TOKEN DEL XML DEVOLVIDO
 			$rsp_token = new SimpleXMLElement($mnsj_token);
 			$token = $rsp_token->token;
+
+			// CONTROLAMOS SI EL TOKEN ES CORRECTO
+			while ($token === '') {
+				
+				//SI NO ES CORRECTO SE VUELVE A PEDIR OTRO HASTA QUE VAYA BIEN.
+				 $transaccion = $this->xml_post->get_transaction();
+				 $xml_token = $this->xml_post->get_xml_token($transaccion);
+				 $mnsj_token = $this->xml_post->http_post($URL_token, $xml_token);
+				 $rsp_token = new SimpleXMLElement($mnsj_token);
+				 $token = $rsp_token->token;
+			}
+			
 
 			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y TOKENS
 			$this->requests_model->insert_token_req(
