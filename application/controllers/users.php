@@ -74,7 +74,7 @@ class Users extends CI_Controller {
 
 	public function cuenta(){
 		$usuario_actual = $this->session->userdata('username');
-		$data['usuario'] = $this->users_model->datos_usuario($usuario_actual);
+		$data['usuario'] = $this->users_model->datos_usuario($usuario_actual);		
 		$this->load->view('cuenta', $data);
 
 	}

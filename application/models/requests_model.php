@@ -1,11 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Requests_model extends CI_Model {
 
-    public function insert_user($table, $data){ //insert a table on the database
-
-    	return $this->db->insert($table, $data);
-    }
-
     public function select_active(){
         $active = 1;
         $saldo = 2;
@@ -90,5 +85,30 @@ class Requests_model extends CI_Model {
         $this->db->insert('cobro_response', $cobro_response);
     }
 
+    public function get_saldo($user_id){
+        $this->db->select('saldo');
+        $this->db->where('user_id', $user_id);
+        return $this->db->get('users')->row()->saldo;
+    }
 
+    public function update_saldo($user_id){
+        $saldo = $this->get_saldo($user_id);
+        $saldo = $saldo - 2;
+
+        if ($saldo < 2) {
+            $this->update_active($user_id);
+        }
+
+        $data = array('saldo' => $saldo);
+
+        $this->db->where('user_id', $user_id);
+        $this->db->update('users', $data); 
+    }
+
+    public function update_active($user_id){
+        $data = array('active' => 0);
+
+        $this->db->where('user_id', $user_id);
+        $this->db->update('users', $data); 
+    }
 }
