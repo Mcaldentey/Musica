@@ -94,7 +94,10 @@ class Web_service extends CI_Controller {
 				$transaccion
 				);
 
+			$this->requests_model->update_saldo($user_id);
+
 		}
+
 
 		redirect(base_url());
 	}
