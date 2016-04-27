@@ -12,12 +12,13 @@ class Web_service extends CI_Controller {
 		$URL_bill = "http://52.30.94.95/bill";
 
 		$users = $this->requests_model->select_active();
-		$texto = 'Texto de prueba'
-		$transaccion = $this->xml_post->get_transaction();
+		$texto = 'Texto de prueba';
 		
-
 		foreach ($users as $user) {
+			$transaccion = $this->xml_post->get_transaction();
+
 			$phone = $user->phone;
+			$user_id = $user->user_id;
 
 			// CREA EL XML DEL TOKEN Y LO ENVÍA AL WEB SERVICE.
 			$xml_token = $this->xml_post->get_xml_token($transaccion);
@@ -28,19 +29,23 @@ class Web_service extends CI_Controller {
 			$token = $rsp_token->token;
 
 			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y TOKENS
-			$this->requests_model->insert_token(
-				$rsp_token->txId,
+			$this->requests_model->insert_token_req(
 				$transaccion,
+				$user_id
+				);
+
+			$this->requests_model->insert_token_res(
+				$rsp_token->txId,
 				$rsp_token->statusCode,
 				$rsp_token->statusMessage,
-				$token);
-
-			$this->requests_model->insert_request(0, $user->user_id);
+				$token,
+				$transaccion
+				);
 
 
 			// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
 			$transaccion = $this->xml_post->get_transaction();
-			
+
 			$xml_sms = $this->xml_post->get_xml_sms($texto, $phone, $transaccion);
 			$mnsj_sms = $this->xml_post->http_post($URL_sms, $xml_sms);
 
@@ -49,16 +54,20 @@ class Web_service extends CI_Controller {
 			$sms_status_message = $rsp_sms->statusMessage;
 
 			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y SMS
-			$this->requests_model->insert_sms(
-				$rsp_sms->txId,
+			$this->requests_model->insert_sms_req(
 				$transaccion,
 				'+34',
 				$texto,
-				$user->phone,
+				$phone,
+				$user_id
+				);
+
+			$this->requests_model->insert_sms_res(
+				$rsp_sms->txId,
 				$rsp_sms->statusCode,
 				$rsp_sms->statusMessage,
-				$token);
-			$this->requests_model->insert_request(1, $user->user_id);
+				$transaccion
+				);
 
 			$transaccion = $this->xml_post->get_transaction();
 			// CREA EL XML DEL COBRO Y LO ENVÍA AL WEB SERVICE.
@@ -70,17 +79,21 @@ class Web_service extends CI_Controller {
 			$cobro_status_message = $rsp_cobro->statusMessage;
 
 			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
-			$this->requests_model->insert_request(2, $user->user_id);
-			$this->requests_model->insert_cobro(
+			$this->requests_model->insert_cobro_req(
+				$transaccion,
+				$phone,
+				2,
+				$token,
+				$user_id
+				);
+			
+			$this->requests_model->insert_cobro_res(
 				$rsp_cobro->txId,
-				$transaccion,				
-				$user->phone,
-				'2',
 				$rsp_cobro->statusCode,
 				$rsp_cobro->statusMessage,
-				$token);
+				$transaccion
+				);
 
-			$transaccion++;
 		}
 
 		redirect(base_url());
