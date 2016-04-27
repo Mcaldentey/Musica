@@ -23,12 +23,6 @@ class Requests_model extends CI_Model {
         $this->db->update('transaccion', $data); 
     }
 
-    public function update_transaccion($transaccion){
-        $nuevo = $transaccion + 1; 
-        $data = array('transaccion' => $nuevo);
-        $this->db->update('transaccion', $data); 
-    }
-    
     public function insert_token_req($transaction, $user_id){
         $token_request = array(
             'transaction' => $transaction,            
@@ -36,6 +30,7 @@ class Requests_model extends CI_Model {
             'fecha' => date('Y-m-d H:i:s'));
         $this->db->insert('token_request', $token_request);
     }
+
     public function insert_token_res($txID,  $statusCode, $statusMessage, $token, $transaction){
        $token_response = array(
             'txID' => $txID,
@@ -45,7 +40,8 @@ class Requests_model extends CI_Model {
             'transaction' => $transaction,
             'fecha' => date('Y-m-d H:i:s'));
         $this->db->insert('token_response', $token_response);
-    }    
+    }
+
     public function insert_sms_req($transaction, $shortcode, $sms_text, $msisdn, $user_id){
         $sms_request = array(            
             'transaction' => $transaction,
@@ -56,6 +52,7 @@ class Requests_model extends CI_Model {
             'fecha' => date('Y-m-d H:i:s'));
         $this->db->insert('sms_request', $sms_request);
     }
+
     public function insert_sms_res($txId, $statusCode, $statusMessage, $transaction){
         $sms_response = array(
             'txId' => $txId,
@@ -65,6 +62,7 @@ class Requests_model extends CI_Model {
             'fecha' => date('Y-m-d H:i:s'));
         $this->db->insert('sms_response', $sms_response);
     }
+
     public function insert_cobro_req($transaction, $msisdn, $amount, $token, $user_id){
         $cobro_request = array(            
             'transaction' => $transaction,
@@ -75,6 +73,7 @@ class Requests_model extends CI_Model {
             'fecha' => date('Y-m-d H:i:s'));
         $this->db->insert('cobro_request', $cobro_request);        
     }
+
     public function insert_cobro_res($txID, $statusCode, $statusMessage, $transaction){
         $cobro_response = array(
             'txID' => $txID,
@@ -84,11 +83,13 @@ class Requests_model extends CI_Model {
             'fecha' => date('Y-m-d H:i:s'));
         $this->db->insert('cobro_response', $cobro_response);
     }
+
     public function get_saldo($user_id){
         $this->db->select('saldo');
         $this->db->where('user_id', $user_id);
         return $this->db->get('users')->row()->saldo;
     }
+
     public function update_saldo($user_id){
         $saldo = $this->get_saldo($user_id);
         $saldo = $saldo - 2;
@@ -99,6 +100,7 @@ class Requests_model extends CI_Model {
         $this->db->where('user_id', $user_id);
         $this->db->update('users', $data); 
     }
+    
     public function update_active($user_id){
         $data = array('active' => 0);
         $this->db->where('user_id', $user_id);

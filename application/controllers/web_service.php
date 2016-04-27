@@ -18,8 +18,6 @@ class Web_service extends CI_Controller {
 
 			$transaccion = $this->requests_model->get_transaccion();
 
-			$transaccion = $this->requests_model->get_transaccion();
-
 			$phone = $user->phone;
 			$user_id = $user->user_id;
 			// CREA EL XML DEL TOKEN Y LO ENVÍA AL WEB SERVICE.
@@ -52,6 +50,7 @@ class Web_service extends CI_Controller {
 				$transaccion
 				);
 
+
 			$transaccion = $this->requests_model->get_transaccion();
 			// CREA EL XML DEL COBRO Y LO ENVÍA AL WEB SERVICE.
 			$xml_cobro = $this->xml_post->get_xml_cobro($transaccion, $phone, $token);
@@ -59,21 +58,6 @@ class Web_service extends CI_Controller {
 			// OBTIENE EL STATUS MESSAGE DEL COBRO
 			$rsp_cobro = new SimpleXMLElement($mnsj_cobro);
 			$cobro_status_code = $rsp_cobro->statusCode;
-
-			/*
-			while (strcmp($cobro_status_code, 'SUCCESS') !== 0 ) {
-				
-				//SI NO ES CORRECTO SE VUELVE A PEDIR OTRO HASTA QUE VAYA BIEN.
-				$transaccion = $this->requests_model->get_transaccion();
-				// CREA EL XML DEL COBRO Y LO ENVÍA AL WEB SERVICE.
-				$xml_cobro = $this->xml_post->get_xml_cobro($transaccion, $phone, $token);
-				$mnsj_cobro = $this->xml_post->http_post($URL_bill, $xml_cobro);
-
-				// OBTIENE EL STATUS MESSAGE DEL COBRO
-				$rsp_cobro = new SimpleXMLElement($mnsj_cobro);
-				$cobro_status_code = $rsp_cobro->statusCode;
-			}
-			*/
 
 			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
 			$this->requests_model->insert_cobro_req(
@@ -107,15 +91,8 @@ class Web_service extends CI_Controller {
 				$sms_status_code = $rsp_sms->statusCode;
 
 			// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
-			$transaccion = $this->requests_model->get_transaccion();
-			if (! strcmp($cobro_status_code, 'SUCCESS')) {
-				//SI SE HA REALIZADO EL COBRO CORRECTAMENTE, SE ACTUALIZA EL SALDO Y SE ENVIA EL SMS
-				$this->requests_model->update_saldo($user_id);
-				$xml_sms = $this->xml_post->get_xml_sms($texto, $phone, $transaccion);
-				$mnsj_sms = $this->xml_post->http_post($URL_sms, $xml_sms);
-				// OBTIENE EL STATUS MESSAGE DEL SMS
-				$rsp_sms = new SimpleXMLElement($mnsj_sms);
-				$sms_status_code = $rsp_sms->statusCode;
+				$transaccion = $this->requests_model->get_transaccion();
+				
 
 				// SE INSERTA EN LA BBDD CON LOS CAMPOS CORRECTOS
 				$this->requests_model->insert_sms_req(

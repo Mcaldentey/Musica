@@ -20,9 +20,9 @@
     <header>
         <div class="header-content">
             <div class="header-content-inner">
-                <h1>Recibe semanalmente la mejor música actual</h1>
+                <h1>Recibe la mejor música actual</h1>
                 <hr>
-                <p style="color:white;">Recibe cada lunes las mejores canciones del momento por solo 2€ semanales!</p>
+                <p style="color:white;">Recibe SMS con las mejores canciones del momento por solo 2€ semanales!</p>
                 <a href="<?=base_url()?>users/registrarse" class="btn btn-primary btn-xl page-scroll">Suscribirse</a>
             </div>
         </div>

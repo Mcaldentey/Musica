@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No se permite el acceso directo al script');
 class Xml_post {
+
+	
 	public function get_xml_sms($text, $msisdn,$transaction){
 		$xml_data ='<?xml version="1.0" encoding="UTF-8"?>'.
 		'<request>'.				
@@ -10,6 +12,7 @@ class Xml_post {
 		'</request>';
 		return $xml_data;
 	}
+
 	public function get_xml_cobro($transaction, $msisdn, $token){
 		$xml_data ='<?xml version="1.0" encoding="UTF-8"?>'.
 		'<request>'.
@@ -20,6 +23,7 @@ class Xml_post {
 		'</request>';
 		return $xml_data;
 	}
+
 	public function get_xml_token($transaction){
 		$xml_data ='<?xml version="1.0" encoding="UTF-8"?>'.
 		'<request>'.
@@ -27,6 +31,7 @@ class Xml_post {
 		'</request>';
 		return $xml_data;
 	}
+
 	public function http_post($URL, $xml){
 		
 		$conexion = curl_init($URL);

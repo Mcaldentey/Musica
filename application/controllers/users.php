@@ -44,11 +44,10 @@ class Users extends CI_Controller {
 			$admin = 1;
 		}
 
-		
 		$session = array(
 			'username' => $username,				
 			'is_logged_in' => TRUE,
-			'admin' => 1
+			'admin' => $admin
 			);
 		$this -> session -> set_userdata($session);
 	}
