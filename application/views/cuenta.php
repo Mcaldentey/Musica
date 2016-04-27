@@ -53,7 +53,7 @@
                     <h4 class="modal-title">Darse de Alta</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Al aceptar darse de alta, se va a cargar un pago de 2€ el próximo Lunes a la tarjeta introducida en tu cuenta de usuario.</p>
+                    <p>Al aceptar darse de alta, se van a consumir 2 de saldo en tu cuenta de usuario.</p>
                 </div>
                 <div class="modal-footer">
                     <a href="<?=base_url()?>operaciones/alta" class="btn btn-primary btn-xl page-scroll">Darse de Alta</a>
