@@ -1,7 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No se permite el acceso directo al script');
 class Xml_post {
 
-	
+	// LIBRERÍA PARA LA BIBLIOTECA CURL Y LA CONEXIÓN POST
+
+	// DEVUELVE UN STRING EN FORMATO XML PARA EL SMS
 	public function get_xml_sms($text, $msisdn,$transaction){
 		$xml_data ='<?xml version="1.0" encoding="UTF-8"?>'.
 		'<request>'.				
@@ -13,6 +15,7 @@ class Xml_post {
 		return $xml_data;
 	}
 
+	// DEVUELVE UN STRING EN FORMATO XML PARA EL COBRO
 	public function get_xml_cobro($transaction, $msisdn, $token){
 		$xml_data ='<?xml version="1.0" encoding="UTF-8"?>'.
 		'<request>'.
@@ -24,6 +27,7 @@ class Xml_post {
 		return $xml_data;
 	}
 
+	// DEVUELVE UN STRING EN FORMATO XML PARA EL TOKEN
 	public function get_xml_token($transaction){
 		$xml_data ='<?xml version="1.0" encoding="UTF-8"?>'.
 		'<request>'.
@@ -32,6 +36,7 @@ class Xml_post {
 		return $xml_data;
 	}
 
+	// DADA UNA URL Y XML REALIZA LA CONEXIÓN POST A ESA URL Y LE ENVÍA ESE XML, Y DEVUELVE EL RESULTADO
 	public function http_post($URL, $xml){
 		
 		$conexion = curl_init($URL);

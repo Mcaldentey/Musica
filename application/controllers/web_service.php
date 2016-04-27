@@ -3,6 +3,7 @@ class Web_service extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('requests_model');
+		$this->load->model('operaciones_model');
 		$this->load->library('xml_post');
 	}
 	
@@ -81,7 +82,11 @@ class Web_service extends CI_Controller {
 			if (! strcmp($cobro_status_code, 'SUCCESS')) {
 
 				//SI SE HA REALIZADO EL COBRO CORRECTAMENTE, SE ACTUALIZA EL SALDO Y SE ENVIA EL SMS
-				$this->requests_model->update_saldo($user_id);
+				$baja = $this->requests_model->update_saldo($user_id);
+
+				if ($baja == 1){
+					$this->operaciones_model->insertar_baja($this->operaciones_model->get_username($user_id));
+				}
 
 				$xml_sms = $this->xml_post->get_xml_sms($texto, $phone, $transaccion);
 				$mnsj_sms = $this->xml_post->http_post($URL_sms, $xml_sms);

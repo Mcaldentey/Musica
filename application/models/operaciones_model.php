@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Operaciones_model extends CI_Model {
 
+	// CAMBIA EL CAMPO ALTA DE UN USUARIO DE LA BASE DE DATOS
 	public function alta($username){
 		$data = array(
 			'active' => 1
@@ -12,6 +13,7 @@ class Operaciones_model extends CI_Model {
 		$this->insertar_alta($username);
 	}
 
+	// CUANDO UN USUARIO SE DA DE ALTA EN EL SERVICIO SE REGISTRA EN LA BASE DE DATOS.
 	public function insertar_alta($username){
 		$this->db->select('user_id, phone');
 		$this->db->where('username', $username);
@@ -27,6 +29,7 @@ class Operaciones_model extends CI_Model {
 
 	}
 
+	// SE CAMBIA EL CAMPO DE BAJA DE LA BSE DE DATOS
 	public function baja($username){
 		$data = array(
 			'active' => 0
@@ -38,6 +41,7 @@ class Operaciones_model extends CI_Model {
 		$this->insertar_baja($username);
 	}
 
+	// CUANDO UN USUARIO SE DA DE BAJA EN LA WEB, SE INSERTA EN LA BASE DE DATOS
 	public function insertar_baja($username){
 		$this->db->select('user_id, phone');
 		$this->db->where('username', $username);
@@ -53,6 +57,7 @@ class Operaciones_model extends CI_Model {
 
 	}
 
+	// SE HACE UN UPDATE DEL CAMPO PHONE DEL USERNAME, CON LOS CAMPOS PASADOS POR PARÁMETRO
 	public function cambiar_telefono($username, $phone){
 		$data = array(
 			'phone' => $phone
@@ -63,6 +68,7 @@ class Operaciones_model extends CI_Model {
 
 	}
 
+	// SE HACE UN UPDATE DEL SALDO CON EL QUE TENÍAMOS + EL QUE PASAN
 	public function anadir_saldo($username, $saldo){
 
 		$this->db->set('saldo', 'saldo + '.$saldo, FALSE);
@@ -70,11 +76,18 @@ class Operaciones_model extends CI_Model {
 		$this->db->update('users');
 	}
 
+	// DEVUELVE EL SALDO DE UN USUARIO
 	public function get_saldo($username){		
 
 		$this->db->select('saldo');
 		$this->db->where('username', $username);
 		return $this->db->get('users')->row();
+	}
+
+	public function get_username($user_id){
+		$this->db->select('username');
+		$this->db->where('user_id', $user_id);
+		return $this->db->get('users')->row()->username;
 	}
 
 

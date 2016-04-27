@@ -5,16 +5,26 @@ class Operaciones extends CI_Controller {
 		$this->load->model('operaciones_model');
 	}
 
+	// CUANDO SE CARGA EL CONTROLADOR SE VA A LA PAGINA PRINCIPAL DE LA WEB
+	public function index(){	
+		$this->load->view('portada');
+	}
+
+	//CONTROLADOR PARA LAS OPERACIONES DE LAS CUENTAS DE LOS USUARIOS DE LA WEB
+
+	//PARA DAR DE ALTA A UN USUARIO
 	public function alta(){
 		$this->operaciones_model->alta($this->session->userdata('username'));
 		redirect(base_url().'/users/cuenta');
 	}
 
+	//PARA DAR DE BAJA A UN USUARIO
 	public function baja(){
 		$this->operaciones_model->baja($this->session->userdata('username'));
 		redirect(base_url().'/users/cuenta');
 	}
 
+	//PARA CAMBIAR EL TELÉFONO A UN USUARIO
 	public function cambiar_telefono(){
 		$telefono = $this->input->post('telefono');
 		$username = $this->session->userdata('username');
@@ -24,6 +34,7 @@ class Operaciones extends CI_Controller {
 
 	}
 
+	//AÑADE SALDO A UNA CUENTA SEGÚN EL FORMULARIO
 	public function anadir_saldo(){
 		$saldo = $this->input->post('saldo');
 		$username = $this->session->userdata('username');
