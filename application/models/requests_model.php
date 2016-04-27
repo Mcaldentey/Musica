@@ -12,6 +12,20 @@ class Requests_model extends CI_Model {
 
     }
 
+    public function get_transaccion(){
+        $this->db->select('transaccion');
+        $transaccion = $this->db->get('transaccion')->row()->transaccion;
+        $this->update_transaccion($transaccion);
+        return $transaccion;
+    }
+
+    public function update_transaccion($transaccion){
+        $nuevo = $transaccion + 1; 
+
+        $data = array('transaccion' => $nuevo);
+        $this->db->update('transaccion', $data); 
+    }
+
     public function insert_token_req($transaction, $user_id){
 
         $token_request = array(

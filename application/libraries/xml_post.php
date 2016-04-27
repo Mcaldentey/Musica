@@ -51,10 +51,7 @@ class Xml_post {
 
 		return $output;
 	}
-
-	public function get_transaction(){
-		return uniqid(rand(), true);
-	}
+	
 }
 
 ?>
