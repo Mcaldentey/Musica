@@ -22,7 +22,7 @@
             <div class="header-content-inner">  
                 <?php echo '<h5>'.validation_errors().'</h5>'; ?>
                 <h3>Usuario:  <?php echo $this->session->userdata('username') ?> </h3>
-                <h3>Tu saldo: <?= $usuario->saldo?> </h3>
+                <h3>Tu saldo: <?= $usuario->saldo?> € </h3>
                 <button data-toggle="modal" data-target="#modalSaldo" class="btn btn-primary btn-xl page-scroll">Añadir Saldo</button>
 
                 <h3>Número de Teléfono: <?= $usuario->phone?> </h3>

@@ -52,6 +52,9 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav navbar-right">
                         <?php if ($this->session->userdata('is_logged_in')) : ?>
+                            <li>
+                                <a class="page-scroll"><?php echo 'Bienvenido, '.$this->session->userdata('username') ?></a>
+                            </li> 
                             <?php if ($this->session->userdata('admin') == 1) : ?>
                                 <li>
                                     <a data-toggle="modal" data-target="#modalSms" class="page-scroll">Enviar SMS</a>
