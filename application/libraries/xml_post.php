@@ -50,26 +50,5 @@ class Xml_post {
 		return $output;
 	}
 	
-	public function get_rsp_token($transaction){
-		$URL_token = "http://52.30.94.95/token";
-		
-		// CREA EL XML DEL TOKEN Y LO ENVÍA AL WEB SERVICE.
-		$xml_token = $this->get_xml_token($transaction);
-		$mnsj_token = $this->http_post($URL_token, $xml_token);
-		// OBTIENE EL TOKEN DEL XML DEVOLVIDO
-		$rsp_token = new SimpleXMLElement($mnsj_token);
-		$token = $rsp_token->token;
-		// CONTROLAMOS SI EL TOKEN ES CORRECTO
-		while (empty($token)) {
-
-			//SI NO ES CORRECTO SE VUELVE A PEDIR OTRO HASTA QUE VAYA BIEN.
-			$transaccion = $this->requests_model->get_transaccion();
-			$xml_token = $this->xml_post->get_xml_token($transaccion);
-			$mnsj_token = $this->xml_post->http_post($URL_token, $xml_token);
-			$rsp_token = new SimpleXMLElement($mnsj_token);
-			$token = $rsp_token->token;
-		}
-		return $rsp_token;
-	}
 }
 ?>

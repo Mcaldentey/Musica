@@ -26,22 +26,45 @@ class Operaciones extends CI_Controller {
 
 	//PARA CAMBIAR EL TELÉFONO A UN USUARIO
 	public function cambiar_telefono(){
-		$telefono = $this->input->post('telefono');
-		$username = $this->session->userdata('username');
+		
+		$this->form_validation->set_rules('telefono', 'telefono cambio', 'required|min_length[9]|max_length[12]');
 
-		$this->operaciones_model->cambiar_telefono($username, $telefono);
-		redirect(base_url().'users/cuenta');
+		if ($this->form_validation->run() == TRUE) {
 
+			$telefono = $this->input->post('telefono');
+			$username = $this->session->userdata('username');
+
+			$this->operaciones_model->cambiar_telefono($username, $telefono);
+			redirect(base_url().'users/cuenta');
+
+		} else {
+			redirect(base_url().'users/cuenta');
+		}
 	}
 
 	//AÑADE SALDO A UNA CUENTA SEGÚN EL FORMULARIO
 	public function anadir_saldo(){
-		$saldo = $this->input->post('saldo');
-		$username = $this->session->userdata('username');
 
-		$this->operaciones_model->anadir_saldo($username, $saldo);
-		redirect(base_url().'users/cuenta');
+		$this->form_validation->set_rules('saldo', 'saldo cambio', 'required|numeric');
+
+		if ($this->form_validation->run() == TRUE) {
+	
+			$saldo = $this->input->post('saldo');
+
+			if (! ((is_int($saldo) || ctype_digit($saldo)) && (int)$saldo > 0 )) {
+				redirect(base_url().'users/cuenta');
+			 }
+
+
+			$username = $this->session->userdata('username');
+
+			$this->operaciones_model->anadir_saldo($username, $saldo);
+			redirect(base_url().'users/cuenta');
+
+		} else {
+			redirect(base_url().'users/cuenta');
+		}
 
 	}
-		
+
 }

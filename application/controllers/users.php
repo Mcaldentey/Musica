@@ -31,15 +31,21 @@ class Users extends CI_Controller {
 
 	// COMPRUEBA QUE EL USUARIO INTRODUCIDO ESTÉ EN LA BASE DE DATOS
 	public function comprobar_login(){
-		$username = $this -> input -> post('username');
-		$password = hash('sha256', ($this -> input -> post('password'))) ;
+		$this->form_validation->set_rules('username', 'Username', 'required|min_length[5]|max_length[20]');		
+		$this->form_validation->set_rules('password', 'Password', 'required|min_length[4]|max_length[20]');
 
-		if($user = $this -> users_model -> validate_credentials($username, $password)){  // SI EXISTE EL USUARIO SE CREA LA SESIÓN
-			$this->crear_session($username);
-			redirect(base_url());
+		if ($this->form_validation->run() == TRUE) {
+			
+			$username = $this -> input -> post('username');
+			$password = hash('sha256', ($this -> input -> post('password'))) ;
+
+			if($user = $this -> users_model -> validate_credentials($username, $password)){  // SI EXISTE EL USUARIO SE CREA LA SESIÓN
+				$this->crear_session($username);
+				redirect(base_url());
+			}
+
 		} else {
-
-			$this->load->view('entrar', array('error'=>TRUE)); // SI EL USUARIO NO EXISTE DEVUELVE UN ERROR
+			$this->load->view('entrar');
 		}
 
 	}
@@ -62,30 +68,42 @@ class Users extends CI_Controller {
 	}
 
 	// OBTIENE EL USUARIO INTRODUCIDO DEL FORMULARIO Y LO INTRODUCE EN LA BBDD
-	public function new_user(){ 
-		$username = $this->input->post('username');
-		$email = $this->input->post('email');
-		$password = $this->input->post('password');
-		$phone = $this->input->post('phone');
-		$tarjeta = $this->input->post('tarjeta');
-		$tarjeta_crc = $this->input->post('crc');	
+	public function new_user(){
 
+
+		$this->form_validation->set_rules('username', 'Username', 'required|min_length[5]|max_length[20]');
+		$this->form_validation->set_rules('email', 'Email', 'required|min_length[5]|max_length[50]');
+		$this->form_validation->set_rules('password', 'Password', 'required|min_length[4]|max_length[20]');
+		$this->form_validation->set_rules('phone', 'phone', 'required|min_length[9]|max_length[12]');
+		$this->form_validation->set_rules('tarjeta', 'tarjeta', 'required|min_length[12]|max_length[12]');
+		$this->form_validation->set_rules('crc', 'crc tarjeta', 'required|min_length[3]|max_length[3]');
 		
+		if ($this->form_validation->run() == TRUE)
+		{
+			$username = $this->input->post('username');
+			$email = $this->input->post('email');
+			$password = $this->input->post('password');
+			$phone = $this->input->post('phone');
+			$tarjeta = $this->input->post('tarjeta');
+			$tarjeta_crc = $this->input->post('crc');
 
-		$user = array(                                			
-			'username' => $username,
-			'email' => $email,
-			'password' => hash('sha256', $password),
-			'phone' => $phone,
-			'tarjeta' => hash('sha256', $tarjeta),
-			'tarjeta_crc' => $tarjeta_crc
-			);
-		if($this->users_model->insert_user('users', $user)){                        
-			$this->crear_session($username);
-			redirect(base_url());
-		} else {
-			$this->load->view('registro', array('error'=>TRUE));
-			// EN EL CASO QUE NO FUNCIONE, DEVUELVE UN ERROR.
+			$user = array(                                			
+				'username' => $username,
+				'email' => $email,
+				'password' => hash('sha256', $password),
+				'phone' => $phone,
+				'tarjeta' => hash('sha256', $tarjeta),
+				'tarjeta_crc' => $tarjeta_crc
+				);
+			if($this->users_model->insert_user('users', $user)){                        
+				$this->crear_session($username);
+				redirect(base_url());
+			}
+
+		}
+		else
+		{
+			$this->load->view('registro');
 		}
 	}
 
