@@ -17,9 +17,10 @@
 
     <?php include('nav.php');?>
 
-    <header>
+    <header>        
         <div class="header-content">
             <div class="header-content-inner">  
+                <?php echo '<h5>'.validation_errors().'</h5>'; ?>
                 <h3>Usuario:  <?php echo $this->session->userdata('username') ?> </h3>
                 <h3>Tu saldo: <?= $usuario->saldo?> </h3>
                 <button data-toggle="modal" data-target="#modalSaldo" class="btn btn-primary btn-xl page-scroll">Añadir Saldo</button>
@@ -93,10 +94,10 @@
                     <h4 class="modal-title">Añadir saldo a la cuenta</h4>
                 </div>
                 <div class="modal-body">
-                <p>¿Cuánto saldo quieres añadir?</p>
-                <p>Ten en cuenta que se cargara el mismo saldo como Euros en tu tarjeta.</p>
-                <?=form_open(base_url().'operaciones/anadir_saldo/')?> <!-- Open an input to register an user  -->                    
-                    <p><?= form_input('saldo', '', 'required style="color:black;" placeholder="Saldo"') ?></p>                                    
+                    <p>¿Cuánto saldo quieres añadir?</p>
+                    <p>Ten en cuenta que se cargara el mismo saldo como Euros en tu tarjeta.</p>
+                    <?=form_open(base_url().'operaciones/anadir_saldo/')?> <!-- Open an input to register an user  -->                    
+                    <p><?= form_input('saldo', '', 'style="color:black;" placeholder="Saldo"') ?></p>                                    
                 </div>
                 <div class="modal-footer">
                     <?=form_submit('submit', 'Añadir Saldo', 'class="btn btn-primary btn-xl page-scroll"')?> <!-- Submit the form -->
@@ -118,8 +119,8 @@
                     <h4 class="modal-title">Cambiar el número de teléfono</h4>
                 </div>
                 <div class="modal-body">
-                <?=form_open(base_url().'operaciones/cambiar_telefono/')?> <!-- Open an input to register an user  -->                    
-                    <p><?= form_input('telefono', '', 'required style="color:black;" placeholder="Nº del Teléfono"') ?></p>                                    
+                    <?=form_open(base_url().'operaciones/cambiar_telefono/')?> <!-- Open an input to register an user  -->                    
+                    <p><?= form_input('telefono', '', 'style="color:black;" placeholder="Nº del Teléfono"') ?></p>
                 </div>
                 <div class="modal-footer">
                     <?=form_submit('submit', 'Cambiar', 'class="btn btn-primary btn-xl page-scroll"')?> <!-- Submit the form -->
