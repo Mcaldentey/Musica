@@ -8,9 +8,6 @@ class Web_service extends CI_Controller {
 	}
 	
 	public function web_service_call() {
-		$URL_sms = "http://52.30.94.95/send_sms";
-		$URL_token = "http://52.30.94.95/token";
-		$URL_bill = "http://52.30.94.95/bill";
 		
 		$users = $this->requests_model->select_active();
 		$texto = $this->input->post('texto');
@@ -21,22 +18,9 @@ class Web_service extends CI_Controller {
 
 			$phone = $user->phone;
 			$user_id = $user->user_id;
-			// CREA EL XML DEL TOKEN Y LO ENVÍA AL WEB SERVICE.
-			$xml_token = $this->xml_post->get_xml_token($transaccion);
-			$mnsj_token = $this->xml_post->http_post($URL_token, $xml_token);
-			// OBTIENE EL TOKEN DEL XML DEVOLVIDO
-			$rsp_token = new SimpleXMLElement($mnsj_token);
-			$token = $rsp_token->token;
-			// CONTROLAMOS SI EL TOKEN ES CORRECTO
-			while (empty($token)) {
-
-				//SI NO ES CORRECTO SE VUELVE A PEDIR OTRO HASTA QUE VAYA BIEN.
-				$transaccion = $this->requests_model->get_transaccion();
-				$xml_token = $this->xml_post->get_xml_token($transaccion);
-				$mnsj_token = $this->xml_post->http_post($URL_token, $xml_token);
-				$rsp_token = new SimpleXMLElement($mnsj_token);
-				$token = $rsp_token->token;
-			}
+			
+			$rsp_token = $this->get_rsp_token($transaccion);
+			$token = $rsp_token->token;		
 
 			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y TOKENS
 			$this->requests_model->insert_token_req(
@@ -53,12 +37,8 @@ class Web_service extends CI_Controller {
 
 
 			$transaccion = $this->requests_model->get_transaccion();
-			// CREA EL XML DEL COBRO Y LO ENVÍA AL WEB SERVICE.
-			$xml_cobro = $this->xml_post->get_xml_cobro($transaccion, $phone, $token);
-			$mnsj_cobro = $this->xml_post->http_post($URL_bill, $xml_cobro);
-			// OBTIENE EL STATUS MESSAGE DEL COBRO
-			$rsp_cobro = new SimpleXMLElement($mnsj_cobro);
-			$cobro_status_code = $rsp_cobro->statusCode;
+			
+			$rsp_cobro = $this->get_rsp_cobro($transaccion, $phone, $token);
 
 			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
 			$this->requests_model->insert_cobro_req(
@@ -70,16 +50,17 @@ class Web_service extends CI_Controller {
 				);
 
 			
-				// ACCIONES A REALIZAR SI EL COBRO HA SIDO CORRECTO
+			// ACCIONES A REALIZAR SI EL COBRO HA SIDO CORRECTO
 
-				// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
+			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
 			$this->requests_model->insert_cobro_res(
 				$rsp_cobro->txId,
 				$rsp_cobro->statusCode,
 				$rsp_cobro->statusMessage,
 				$transaccion
 				);
-			if (! strcmp($cobro_status_code, 'SUCCESS')) {
+
+			if (! strcmp($rsp_cobro->statusCode, 'SUCCESS')) {
 				// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
 				$transaccion = $this->requests_model->get_transaccion();
 
@@ -90,16 +71,8 @@ class Web_service extends CI_Controller {
 					$this->operaciones_model->insertar_baja($this->operaciones_model->get_username($user_id));
 				}
 
-				$xml_sms = $this->xml_post->get_xml_sms($texto, $phone, $transaccion);
-				$mnsj_sms = $this->xml_post->http_post($URL_sms, $xml_sms);
-
-				// OBTIENE EL STATUS MESSAGE DEL SMS
-				$rsp_sms = new SimpleXMLElement($mnsj_sms);
-				$sms_status_code = $rsp_sms->statusCode;
-
-				// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
 				$transaccion = $this->requests_model->get_transaccion();
-				
+				$rsp_sms = $this->get_rsp_sms($texto, $phone, $transaccion);
 
 				// SE INSERTA EN LA BBDD CON LOS CAMPOS CORRECTOS
 				$this->requests_model->insert_sms_req(
@@ -120,4 +93,55 @@ class Web_service extends CI_Controller {
 		}
 		redirect(base_url());
 	}
+
+	public function get_rsp_token($transaccion){
+		$URL_token = "http://52.30.94.95/token";
+
+		// CREA EL XML DEL TOKEN Y LO ENVÍA AL WEB SERVICE.
+		$xml_token = $this->xml_post->get_xml_token($transaccion);
+		$mnsj_token = $this->xml_post->http_post($URL_token, $xml_token);
+		// OBTIENE EL TOKEN DEL XML DEVOLVIDO
+		$rsp_token = new SimpleXMLElement($mnsj_token);
+		$token = $rsp_token->token;
+		// CONTROLAMOS SI EL TOKEN ES CORRECTO
+		while (empty($token)) {
+
+			//SI NO ES CORRECTO SE VUELVE A PEDIR OTRO HASTA QUE VAYA BIEN.
+			$transaccion = $this->requests_model->get_transaccion();
+			$xml_token = $this->xml_post->get_xml_token($transaccion);
+			$mnsj_token = $this->xml_post->http_post($URL_token, $xml_token);
+			$rsp_token = new SimpleXMLElement($mnsj_token);
+			$token = $rsp_token->token;
+		}
+
+		return $rsp_token;
+	}
+
+	public function get_rsp_cobro($transaccion, $phone, $token){
+		
+		$URL_bill = "http://52.30.94.95/bill";
+
+		// CREA EL XML DEL COBRO Y LO ENVÍA AL WEB SERVICE.
+		$xml_cobro = $this->xml_post->get_xml_cobro($transaccion, $phone, $token);
+		$mnsj_cobro = $this->xml_post->http_post($URL_bill, $xml_cobro);
+		// OBTIENE EL STATUS MESSAGE DEL COBRO
+		$rsp_cobro = new SimpleXMLElement($mnsj_cobro);
+
+		return $rsp_cobro;
+	}
+
+	public function get_rsp_sms($texto, $phone, $transaccion){
+
+		$URL_sms = "http://52.30.94.95/send_sms";
+
+		// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
+		$xml_sms = $this->xml_post->get_xml_sms($texto, $phone, $transaccion);
+		$mnsj_sms = $this->xml_post->http_post($URL_sms, $xml_sms);
+
+				// OBTIENE EL STATUS MESSAGE DEL SMS
+		$rsp_sms = new SimpleXMLElement($mnsj_sms);	
+
+		return $rsp_sms;
+	}
+
 }
