@@ -34,8 +34,7 @@
                         <?=form_submit('submit', 'Entrar', 'class="btn btn-primary btn-xl page-scroll"')?> <!-- Submit the form -->
 
                     </div>
-                     <?php echo '<h5>'.validation_errors().'</h5>'; ?>
-
+                    <?php echo '<h5>'.validation_errors().'</h5>'; ?>
 
                 </div>
             </div>

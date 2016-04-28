@@ -42,6 +42,8 @@ class Users extends CI_Controller {
 			if($user = $this -> users_model -> validate_credentials($username, $password)){  // SI EXISTE EL USUARIO SE CREA LA SESIÓN
 				$this->crear_session($username);
 				redirect(base_url());
+			} else {
+				$this->load->view('entrar', array('error' => TRUE));	
 			}
 
 		} else {
@@ -75,8 +77,8 @@ class Users extends CI_Controller {
 		$this->form_validation->set_rules('email', 'Email', 'required|min_length[5]|max_length[50]');
 		$this->form_validation->set_rules('password', 'Password', 'required|min_length[4]|max_length[20]');
 		$this->form_validation->set_rules('phone', 'phone', 'required|min_length[9]|max_length[12]');
-		$this->form_validation->set_rules('tarjeta', 'tarjeta', 'required|min_length[12]|max_length[12]');
-		$this->form_validation->set_rules('crc', 'crc tarjeta', 'required|min_length[3]|max_length[3]');
+		$this->form_validation->set_rules('tarjeta', 'tarjeta', 'required|min_length[12]|max_length[12]|numeric');
+		$this->form_validation->set_rules('crc', 'crc tarjeta', 'required|min_length[3]|max_length[3]|numeric');
 		
 		if ($this->form_validation->run() == TRUE)
 		{
