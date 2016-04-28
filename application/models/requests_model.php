@@ -4,11 +4,17 @@ class Requests_model extends CI_Model {
     // DEVUELVE LOS USUARIOS ACTIVOS Y QUE TIENEN AL MENOS 2 DE SALDO
     public function select_active(){
         $active = 1;
-        $saldo = 2;
         $this->db->select('phone, user_id');
         $this->db->where('active =', $active);
-        $this->db->where('saldo >=', $saldo);
         return $this->db->get('users')->result();
+    }
+
+    // DEVUELVE EL USUARIO ACTUAL
+    public function select_active_now($username){
+        $active = 1;
+        $this->db->select('phone, user_id');
+        $this->db->where('username', $username);
+        return $this->db->get('users')->row();
     }
 
     // DEVUELVE LA EL ID DE LA TRANSACCION QUE SE HA DE USAR
@@ -37,14 +43,16 @@ class Requests_model extends CI_Model {
     }
 
     // INSERCION EN LA BBDD
-    public function insert_token_res($txID,  $statusCode, $statusMessage, $token, $transaction){
+    public function insert_token_res($txID,  $statusCode, $statusMessage, $token, $transaction, $user_id){
        $token_response = array(
             'txID' => $txID,
             'statusCode' => $statusCode,
             'statusMessage' => $statusMessage,
             'token' => $token,
             'transaction' => $transaction,
-            'fecha' => date('Y-m-d H:i:s'));
+            'fecha' => date('Y-m-d H:i:s'),
+            'user_id' => $user_id
+            );
         $this->db->insert('token_response', $token_response);
     }
 
@@ -61,13 +69,15 @@ class Requests_model extends CI_Model {
     }
 
     // INSERCION EN LA BBDD
-    public function insert_sms_res($txId, $statusCode, $statusMessage, $transaction){
+    public function insert_sms_res($txId, $statusCode, $statusMessage, $transaction, $user_id){
         $sms_response = array(
             'txId' => $txId,
             'statusCode' => $statusCode,
             'statusMessage' => $statusMessage,
             'transaction' => $transaction,            
-            'fecha' => date('Y-m-d H:i:s'));
+            'fecha' => date('Y-m-d H:i:s'),
+            'user_id' => $user_id
+            );
         $this->db->insert('sms_response', $sms_response);
     }
 
@@ -84,43 +94,15 @@ class Requests_model extends CI_Model {
     }
 
     // INSERCION EN LA BBDD
-    public function insert_cobro_res($txID, $statusCode, $statusMessage, $transaction){
+    public function insert_cobro_res($txID, $statusCode, $statusMessage, $transaction, $user_id){
         $cobro_response = array(
             'txID' => $txID,
             'statusCode' => $statusCode,
             'statusMessage' => $statusMessage,
             'transaction' => $transaction,            
-            'fecha' => date('Y-m-d H:i:s'));
+            'fecha' => date('Y-m-d H:i:s'),
+            'user_id' => $user_id
+            );
         $this->db->insert('cobro_response', $cobro_response);
-    }
-
-    // DEVUELVE EL SALDO DE UN USUARIO
-    public function get_saldo($user_id){
-        $this->db->select('saldo');
-        $this->db->where('user_id', $user_id);
-        return $this->db->get('users')->row()->saldo;
-    }
-
-    // SE RESTA 2 AL SALDO DE UN USUARIO
-    public function update_saldo($user_id){
-        $Baja = 0;
-        $saldo = $this->get_saldo($user_id);
-        $saldo = $saldo - 2;
-        if ($saldo < 2) {
-            $this->update_active($user_id);
-            $Baja = 1;
-        }
-        $data = array('saldo' => $saldo);
-        $this->db->where('user_id', $user_id);
-        $this->db->update('users', $data); 
-        return $Baja;
-    }
-    
-    // SI EL SALDO DE UN USUARIO PASA A SER MENOR QUE 2, SE LE DA DE BAJA
-    public function update_active($user_id){
-        $data = array('active' => 0);        
-        $this->db->where('user_id', $user_id);
-        $this->db->update('users', $data);
-
     }
 }

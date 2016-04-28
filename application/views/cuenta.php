@@ -20,10 +20,8 @@
     <header>        
         <div class="header-content">
             <div class="header-content-inner">  
-                <?php echo '<h5>'.validation_errors().'</h5>'; ?>
+                <?php echo (isset($error)) ? '<p>Error en el Alta!</p>' : '';?>
                 <h3>Usuario:  <?php echo $this->session->userdata('username') ?> </h3>
-                <h3>Tu saldo: <?= $usuario->saldo?> € </h3>
-                <button data-toggle="modal" data-target="#modalSaldo" class="btn btn-primary btn-xl page-scroll">Añadir Saldo</button>
 
                 <h3>Número de Teléfono: <?= $usuario->phone?> </h3>
                 <button data-toggle="modal" data-target="#modalTelefono" class="btn btn-primary btn-xl page-scroll">Cambiar número</button>
@@ -32,11 +30,7 @@
                 <?php if ($usuario->active) : ?>                    
                     <button data-toggle="modal" data-target="#modalBaja" class="btn btn-primary btn-xl page-scroll">Darse de Baja</button>
                 <?php else : ?>
-                    <?php if ($usuario->saldo < 2) :?>
-                        <h4>No tienes saldo suficiente</h4>
-                    <?php else: ?>
-                        <button data-toggle="modal" data-target="#modalAlta" class="btn btn-primary btn-xl page-scroll">Darse de Alta</button>
-                    <?php endif; ?>                    
+                    <button data-toggle="modal" data-target="#modalAlta" class="btn btn-primary btn-xl page-scroll">Darse de Alta</button>
                 <?php endif; ?>
             </div>
         </div>
@@ -54,10 +48,10 @@
                     <h4 class="modal-title">Darse de Alta</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Al aceptar darse de alta, se van a consumir 2 de saldo en tu cuenta de usuario.</p>
+                    <p>Al aceptar darse de alta, se van a consumir 2 de saldo.</p>
                 </div>
                 <div class="modal-footer">
-                    <a href="<?=base_url()?>operaciones/alta" class="btn btn-primary btn-xl page-scroll">Darse de Alta</a>
+                    <a href="<?=base_url()?>web_service/alta_usuario" class="btn btn-primary btn-xl page-scroll">Darse de Alta</a>
                 </div>
             </div>
         </div>
@@ -82,31 +76,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal Saldo -->
-    <div id="modalSaldo" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Añadir saldo a la cuenta</h4>
-                </div>
-                <div class="modal-body">
-                    <p>¿Cuánto saldo quieres añadir?</p>
-                    <p>Ten en cuenta que se cargara el mismo saldo como Euros en tu tarjeta.</p>
-                    <?=form_open(base_url().'operaciones/anadir_saldo/')?> <!-- Open an input to register an user  -->                    
-                    <p><?= form_input('saldo', '', 'style="color:black;" placeholder="Saldo"') ?></p>                                    
-                </div>
-                <div class="modal-footer">
-                    <?=form_submit('submit', 'Añadir Saldo', 'class="btn btn-primary btn-xl page-scroll"')?> <!-- Submit the form -->
-                    <?=form_close() ?>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <!-- Modal Teléfono -->
     <div id="modalTelefono" class="modal fade" role="dialog">

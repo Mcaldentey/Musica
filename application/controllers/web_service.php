@@ -32,7 +32,8 @@ class Web_service extends CI_Controller {
 				$rsp_token->statusCode,
 				$rsp_token->statusMessage,
 				$token,
-				$transaccion
+				$transaccion,
+				$user_id
 				);
 
 
@@ -49,27 +50,24 @@ class Web_service extends CI_Controller {
 				$user_id
 				);
 
-			
-			// ACCIONES A REALIZAR SI EL COBRO HA SIDO CORRECTO
-
 			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
 			$this->requests_model->insert_cobro_res(
 				$rsp_cobro->txId,
 				$rsp_cobro->statusCode,
 				$rsp_cobro->statusMessage,
-				$transaccion
+				$transaccion,
+				$user_id
 				);
 
-			if (! strcmp($rsp_cobro->statusCode, 'SUCCESS')) {
+			if (! strcmp($rsp_cobro->statusCode, 'NO_FUNDS')) {
+				$this->operaciones_model->baja($this->operaciones_model->get_username($user_id));
+				$this->operaciones_model->insertar_baja($this->operaciones_model->get_username($user_id));
+
+			} else if (! strcmp($rsp_cobro->statusCode, 'SUCCESS')) {
 				// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
 				$transaccion = $this->requests_model->get_transaccion();
 
-				//SI SE HA REALIZADO EL COBRO CORRECTAMENTE, SE ACTUALIZA EL SALDO Y SE ENVIA EL SMS
-				$baja = $this->requests_model->update_saldo($user_id);
-
-				if ($baja == 1){
-					$this->operaciones_model->insertar_baja($this->operaciones_model->get_username($user_id));
-				}
+				//SI SE HA REALIZADO EL COBRO CORRECTAMENTE, SE ENVIA EL SMS
 
 				$transaccion = $this->requests_model->get_transaccion();
 				$rsp_sms = $this->get_rsp_sms($texto, $phone, $transaccion);
@@ -87,7 +85,8 @@ class Web_service extends CI_Controller {
 					$rsp_sms->txId,
 					$rsp_sms->statusCode,
 					$rsp_sms->statusMessage,
-					$transaccion
+					$transaccion,
+					$user_id
 					);	
 			}
 		}
@@ -142,6 +141,89 @@ class Web_service extends CI_Controller {
 		$rsp_sms = new SimpleXMLElement($mnsj_sms);	
 
 		return $rsp_sms;
+	}
+
+	//PARA DAR DE ALTA A UN USUARIO
+	public function alta_usuario(){
+
+		$transaccion = $this->requests_model->get_transaccion();
+		$user = $this->requests_model->select_active_now($this->session->userdata('username'));
+
+		$texto = "Te has dado de alta satisfactoriamente";
+		$phone = $user->phone;
+		$user_id = $user->user_id;
+
+		$rsp_token = $this->get_rsp_token($transaccion);
+
+		$this->requests_model->insert_token_req(
+			$transaccion,
+			$user_id
+			);
+		$this->requests_model->insert_token_res(
+			$rsp_token->txId,
+			$rsp_token->statusCode,
+			$rsp_token->statusMessage,
+			$rsp_token->token,
+			$transaccion,
+			$user_id
+			);
+
+		$transaccion = $this->requests_model->get_transaccion();
+
+		$rsp_cobro = $this->get_rsp_cobro($transaccion, $phone, $rsp_token->token);
+
+		// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
+		$this->requests_model->insert_cobro_req(
+			$transaccion,
+			$phone,
+			2,
+			$rsp_token->token,
+			$user_id
+			);
+
+			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
+		$this->requests_model->insert_cobro_res(
+			$rsp_cobro->txId,
+			$rsp_cobro->statusCode,
+			$rsp_cobro->statusMessage,
+			$transaccion,
+			$user_id
+			);
+
+		if (! strcmp($rsp_cobro->statusCode, 'NO_FUNDS')) {
+			redirect(base_url().'/users/cuenta_error');
+			
+
+		} else if (! strcmp($rsp_cobro->statusCode, 'SUCCESS')) {
+				// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
+			$transaccion = $this->requests_model->get_transaccion();
+
+				//SI SE HA REALIZADO EL COBRO CORRECTAMENTE, SE ENVIA EL SMS
+
+			$transaccion = $this->requests_model->get_transaccion();
+			$rsp_sms = $this->get_rsp_sms($texto, $phone, $transaccion);
+
+				// SE INSERTA EN LA BBDD CON LOS CAMPOS CORRECTOS
+			$this->requests_model->insert_sms_req(
+				$transaccion,
+				'+34',
+				$texto,
+				$phone,
+				$user_id
+				);
+
+			$this->requests_model->insert_sms_res(
+				$rsp_sms->txId,
+				$rsp_sms->statusCode,
+				$rsp_sms->statusMessage,
+				$transaccion,
+				$user_id
+				);
+
+			$this->operaciones_model->alta($this->session->userdata('username'));
+			redirect(base_url().'/users/cuenta');	
+		}
+		redirect(base_url().'/users/cuenta_error');
 	}
 
 }
