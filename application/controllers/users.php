@@ -3,7 +3,7 @@ class Users extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
 		date_default_timezone_set('Europe/Madrid');		
-		$this->load->model('users_model');
+		$this->load->model('users_model');		
 	}
 
 	// CONTROLADOR QUE REALIZA LAS OPERACIONES DE LOS USUARIOS DE LA WEB
@@ -77,8 +77,6 @@ class Users extends CI_Controller {
 		$this->form_validation->set_rules('email', 'Email', 'required|min_length[5]|max_length[50]');
 		$this->form_validation->set_rules('password', 'Password', 'required|min_length[4]|max_length[20]');
 		$this->form_validation->set_rules('phone', 'phone', 'required|min_length[9]|max_length[12]');
-		$this->form_validation->set_rules('tarjeta', 'tarjeta', 'required|min_length[12]|max_length[12]|numeric');
-		$this->form_validation->set_rules('crc', 'crc tarjeta', 'required|min_length[3]|max_length[3]|numeric');
 		
 		if ($this->form_validation->run() == TRUE)
 		{
@@ -94,8 +92,6 @@ class Users extends CI_Controller {
 				'email' => $email,
 				'password' => hash('sha256', $password),
 				'phone' => $phone,
-				'tarjeta' => hash('sha256', $tarjeta),
-				'tarjeta_crc' => $tarjeta_crc
 				);
 			if($this->users_model->insert_user('users', $user)){                        
 				$this->crear_session($username);
@@ -111,10 +107,19 @@ class Users extends CI_Controller {
 
 	// CARGA LA VISTA DE LA CUENTA PASANDOLE LOS DATOS DEL USUARIO QUE ESTA LOGUEADO
 	public function cuenta(){
+		
 		$usuario_actual = $this->session->userdata('username');
-		$data['usuario'] = $this->users_model->datos_usuario($usuario_actual);		
+		$data['usuario'] = $this->users_model->datos_usuario($usuario_actual);
+		$data['error_alta'] = array('error' => FALSE);
 		$this->load->view('cuenta', $data);
 
+	}
+
+	public function cuenta_error(){
+		$usuario_actual = $this->session->userdata('username');
+		$data['usuario'] = $this->users_model->datos_usuario($usuario_actual);
+		$data['error_alta'] = array('error' => TRUE);
+		$this->load->view('cuenta', $data);
 	}
 
 }

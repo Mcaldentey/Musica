@@ -15,7 +15,7 @@ class Users_model extends CI_Model {
 
     // DEVUELE EL SALDO, TELEFONO Y SI ESTÁ DE ALTA DE UN USUARIO
     public function datos_usuario($username){
-    	$this->db->select('saldo, phone, active');
+    	$this->db->select('phone, active');
     	$this->db->where('username', $username);
         return $this->db->get('users')->row();
     }

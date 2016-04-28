@@ -68,22 +68,6 @@ class Operaciones_model extends CI_Model {
 
 	}
 
-	// SE HACE UN UPDATE DEL SALDO CON EL QUE TENÍAMOS + EL QUE PASAN
-	public function anadir_saldo($username, $saldo){
-
-		$this->db->set('saldo', 'saldo + '.$saldo, FALSE);
-		$this->db->where('username', $username);
-		$this->db->update('users');
-	}
-
-	// DEVUELVE EL SALDO DE UN USUARIO
-	public function get_saldo($username){		
-
-		$this->db->select('saldo');
-		$this->db->where('username', $username);
-		return $this->db->get('users')->row();
-	}
-
 	public function get_username($user_id){
 		$this->db->select('username');
 		$this->db->where('user_id', $user_id);

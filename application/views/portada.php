@@ -22,7 +22,7 @@
             <div class="header-content-inner">
                 <h1>Recibe la mejor música actual</h1>
                 <hr>
-                <p style="color:white;">Recibe SMS con las mejores canciones del momento por solo 2€ semanales!</p>
+                <p style="color:white;">Recibe SMS con las mejores canciones del momento por solo 2€!</p>
                 <?php if( ! $this->session->userdata('is_logged_in')) :?>
                     <a href="<?=base_url()?>users/registrarse" class="btn btn-primary btn-xl page-scroll">Suscribirse</a>
                 <?php endif; ?>
