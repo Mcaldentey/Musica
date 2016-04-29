@@ -14,7 +14,7 @@ class Operaciones extends CI_Controller {
 	//PARA DAR DE BAJA A UN USUARIO
 	public function baja(){
 		$this->operaciones_model->baja($this->session->userdata('username'));
-		redirect(base_url().'/users/cuenta');
+		redirect(base_url().'users/cuenta');
 	}
 
 	//PARA CAMBIAR EL TELÉFONO A UN USUARIO
