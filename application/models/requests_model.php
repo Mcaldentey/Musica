@@ -105,4 +105,59 @@ class Requests_model extends CI_Model {
             );
         $this->db->insert('cobro_response', $cobro_response);
     }
+
+    // CON LOS PARAMETROS PASADOS INSERTA LOS TOKENS EN LAS 2 BASES DE DATOS DE TOKEN
+    public function insert_token($transaccion, $user_id, $rsp_token){
+
+        $this->insert_token_req(
+            $transaccion,
+            $user_id
+            );
+        $this->insert_token_res(
+            $rsp_token->txId,
+            $rsp_token->statusCode,
+            $rsp_token->statusMessage,
+            $rsp_token->token,
+            $transaccion,
+            $user_id
+            );
+    }
+
+    // CON LOS PARAMETROS PASADOS INSERTA LOS TOKENS EN LAS 2 BASES DE DATOS DE COBROS
+    public function insert_cobro($transaccion, $phone, $user_id, $token, $rsp_cobro){
+        $this->insert_cobro_req(
+            $transaccion,
+            $phone,
+            2,
+            $rsp_token->token,
+            $user_id
+            );
+
+            // INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
+        $this->insert_cobro_res(
+            $rsp_cobro->txId,
+            $rsp_cobro->statusCode,
+            $rsp_cobro->statusMessage,
+            $transaccion,
+            $user_id
+            );
+    }
+
+    public function insert_sms($transaccion, $user_id, $texto, $phone, $rsp_sms){
+        $this->requests_model->insert_sms_req(
+                $transaccion,
+                '+34',
+                $texto,
+                $phone,
+                $user_id
+                );
+
+            $this->requests_model->insert_sms_res(
+                $rsp_sms->txId,
+                $rsp_sms->statusCode,
+                $rsp_sms->statusMessage,
+                $transaccion,
+                $user_id
+                );
+    }
 }

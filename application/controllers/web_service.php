@@ -7,11 +7,13 @@ class Web_service extends CI_Controller {
 		$this->load->library('xml_post');
 	}
 	
+	//ENVIA UN SMS CON TEXTO A TODOS LOS USUARIOS ACTIVOS DE LA BBDD
 	public function web_service_call() {
 		
 		$users = $this->requests_model->select_active();
 		$texto = $this->input->post('texto');
 		
+		//POR CADA USUARIO
 		foreach ($users as $user) {
 
 			$transaccion = $this->requests_model->get_transaccion();
@@ -19,50 +21,39 @@ class Web_service extends CI_Controller {
 			$phone = $user->phone;
 			$user_id = $user->user_id;
 			
-			$rsp_token = $this->get_rsp_token($transaccion);
+			//COGE LA RESPUESTA DE LA PETICION DE TOKEN
+			$rsp_token = $this->get_rsp_valid_token($transaccion);
 			$token = $rsp_token->token;		
 
 			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y TOKENS
-			$this->requests_model->insert_token_req(
+			$this->requests_model->insert_token(
 				$transaccion,
-				$user_id
-				);
-			$this->requests_model->insert_token_res(
-				$rsp_token->txId,
-				$rsp_token->statusCode,
-				$rsp_token->statusMessage,
-				$token,
-				$transaccion,
-				$user_id
+				$user_id,
+				$rsp_token
 				);
 
 
 			$transaccion = $this->requests_model->get_transaccion();
 			
-			$rsp_cobro = $this->get_rsp_cobro($transaccion, $phone, $token);
+			//COGE LA RESPUESTA DE LA PETICIÓN DE COBRO
+			$rsp_cobro = $this->xml_post->get_rsp_cobro($transaccion, $phone, $token);
 
 			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
-			$this->requests_model->insert_cobro_req(
+			$this->requests_model->insert_cobro(
 				$transaccion,
-				$phone,
-				2,
-				$token,
-				$user_id
+				$phone,			
+				$user_id,
+				$rsp_token->token,
+				$rsp_cobro
 				);
 
-			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
-			$this->requests_model->insert_cobro_res(
-				$rsp_cobro->txId,
-				$rsp_cobro->statusCode,
-				$rsp_cobro->statusMessage,
-				$transaccion,
-				$user_id
-				);
 
+			// SI NO TIENE SALDO, SE LE DA DE BAJA Y SE INSERTA LA BAJA EN LA BBDD
 			if (! strcmp($rsp_cobro->statusCode, 'NO_FUNDS')) {
 				$this->operaciones_model->baja($this->operaciones_model->get_username($user_id));
 				$this->operaciones_model->insertar_baja($this->operaciones_model->get_username($user_id));
 
+			// SI FUNCION SE ENVÍA EL SMS
 			} else if (! strcmp($rsp_cobro->statusCode, 'SUCCESS')) {
 				// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
 				$transaccion = $this->requests_model->get_transaccion();
@@ -70,78 +61,36 @@ class Web_service extends CI_Controller {
 				//SI SE HA REALIZADO EL COBRO CORRECTAMENTE, SE ENVIA EL SMS
 
 				$transaccion = $this->requests_model->get_transaccion();
-				$rsp_sms = $this->get_rsp_sms($texto, $phone, $transaccion);
+				$rsp_sms = $this->xml_post->get_rsp_sms($texto, $phone, $transaccion);
 
 				// SE INSERTA EN LA BBDD CON LOS CAMPOS CORRECTOS
-				$this->requests_model->insert_sms_req(
+				$this->requests_model->insert_sms(
 					$transaccion,
-					'+34',
+					$user_id,				
 					$texto,
 					$phone,
-					$user_id
+					$rsp_sms
 					);
-
-				$this->requests_model->insert_sms_res(
-					$rsp_sms->txId,
-					$rsp_sms->statusCode,
-					$rsp_sms->statusMessage,
-					$transaccion,
-					$user_id
-					);	
 			}
 		}
 		redirect(base_url());
 	}
 
-	public function get_rsp_token($transaccion){
-		$URL_token = "http://52.30.94.95/token";
+	public function get_rsp_valid_token($transaccion){
 
-		// CREA EL XML DEL TOKEN Y LO ENVÍA AL WEB SERVICE.
-		$xml_token = $this->xml_post->get_xml_token($transaccion);
-		$mnsj_token = $this->xml_post->http_post($URL_token, $xml_token);
 		// OBTIENE EL TOKEN DEL XML DEVOLVIDO
-		$rsp_token = new SimpleXMLElement($mnsj_token);
-		$token = $rsp_token->token;
+		$rsp_token = $this->xml_post->get_rsp_token($transaccion);
 		// CONTROLAMOS SI EL TOKEN ES CORRECTO
-		while (empty($token)) {
+		while (empty($rsp_token->token)) {
 
 			//SI NO ES CORRECTO SE VUELVE A PEDIR OTRO HASTA QUE VAYA BIEN.
-			$transaccion = $this->requests_model->get_transaccion();
-			$xml_token = $this->xml_post->get_xml_token($transaccion);
-			$mnsj_token = $this->xml_post->http_post($URL_token, $xml_token);
-			$rsp_token = new SimpleXMLElement($mnsj_token);
-			$token = $rsp_token->token;
+			$transaccion = $this->requests_model->get_transaccion();			
+			$rsp_token = $this->xml_post->get_rsp_token($transaccion);			
 		}
-
 		return $rsp_token;
 	}
 
-	public function get_rsp_cobro($transaccion, $phone, $token){
-		
-		$URL_bill = "http://52.30.94.95/bill";
-
-		// CREA EL XML DEL COBRO Y LO ENVÍA AL WEB SERVICE.
-		$xml_cobro = $this->xml_post->get_xml_cobro($transaccion, $phone, $token);
-		$mnsj_cobro = $this->xml_post->http_post($URL_bill, $xml_cobro);
-		// OBTIENE EL STATUS MESSAGE DEL COBRO
-		$rsp_cobro = new SimpleXMLElement($mnsj_cobro);
-
-		return $rsp_cobro;
-	}
-
-	public function get_rsp_sms($texto, $phone, $transaccion){
-
-		$URL_sms = "http://52.30.94.95/send_sms";
-
-		// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
-		$xml_sms = $this->xml_post->get_xml_sms($texto, $phone, $transaccion);
-		$mnsj_sms = $this->xml_post->http_post($URL_sms, $xml_sms);
-
-				// OBTIENE EL STATUS MESSAGE DEL SMS
-		$rsp_sms = new SimpleXMLElement($mnsj_sms);	
-
-		return $rsp_sms;
-	}
+	
 
 	//PARA DAR DE ALTA A UN USUARIO
 	public function alta_usuario(){
@@ -153,46 +102,30 @@ class Web_service extends CI_Controller {
 		$phone = $user->phone;
 		$user_id = $user->user_id;
 
-		$rsp_token = $this->get_rsp_token($transaccion);
+		$rsp_token = $this->get_rsp_valid_token($transaccion);
 
-		$this->requests_model->insert_token_req(
+		$this->requests_model->insert_token(
 			$transaccion,
-			$user_id
-			);
-		$this->requests_model->insert_token_res(
-			$rsp_token->txId,
-			$rsp_token->statusCode,
-			$rsp_token->statusMessage,
-			$rsp_token->token,
-			$transaccion,
-			$user_id
+			$user_id,
+			$rsp_token
 			);
 
 		$transaccion = $this->requests_model->get_transaccion();
 
-		$rsp_cobro = $this->get_rsp_cobro($transaccion, $phone, $rsp_token->token);
+		$rsp_cobro = $this->xml_post->get_rsp_cobro($transaccion, $phone, $rsp_token->token);
 
-		// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
-		$this->requests_model->insert_cobro_req(
+		// INSERTA LA OPERACION EN LA BBDD DE COBROS
+		$this->requests_model->insert_cobro(
 			$transaccion,
-			$phone,
-			2,
+			$phone,			
+			$user_id,
 			$rsp_token->token,
-			$user_id
-			);
-
-			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
-		$this->requests_model->insert_cobro_res(
-			$rsp_cobro->txId,
-			$rsp_cobro->statusCode,
-			$rsp_cobro->statusMessage,
-			$transaccion,
-			$user_id
+			$rsp_cobro
 			);
 
 		if (! strcmp($rsp_cobro->statusCode, 'NO_FUNDS')) {
-			redirect(base_url().'/users/cuenta_error');
-			
+			redirect(base_url().'users/cuenta_error');
+
 
 		} else if (! strcmp($rsp_cobro->statusCode, 'SUCCESS')) {
 				// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
@@ -201,29 +134,21 @@ class Web_service extends CI_Controller {
 				//SI SE HA REALIZADO EL COBRO CORRECTAMENTE, SE ENVIA EL SMS
 
 			$transaccion = $this->requests_model->get_transaccion();
-			$rsp_sms = $this->get_rsp_sms($texto, $phone, $transaccion);
+			$rsp_sms = $this->xml_post->get_rsp_sms($texto, $phone, $transaccion);
 
 				// SE INSERTA EN LA BBDD CON LOS CAMPOS CORRECTOS
-			$this->requests_model->insert_sms_req(
+			$this->requests_model->insert_sms(
 				$transaccion,
-				'+34',
+				$user_id,				
 				$texto,
 				$phone,
-				$user_id
-				);
-
-			$this->requests_model->insert_sms_res(
-				$rsp_sms->txId,
-				$rsp_sms->statusCode,
-				$rsp_sms->statusMessage,
-				$transaccion,
-				$user_id
+				$rsp_sms
 				);
 
 			$this->operaciones_model->alta($this->session->userdata('username'));
-			redirect(base_url().'/users/cuenta');	
+			redirect(base_url().'users/cuenta');	
 		}
-		redirect(base_url().'/users/cuenta_error');
+		redirect(base_url().'users/cuenta_error');
 	}
 
 }

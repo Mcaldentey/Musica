@@ -110,11 +110,11 @@ class Users extends CI_Controller {
 		
 		$usuario_actual = $this->session->userdata('username');
 		$data['usuario'] = $this->users_model->datos_usuario($usuario_actual);
-		$data['error_alta'] = array('error' => FALSE);
 		$this->load->view('cuenta', $data);
 
 	}
 
+	//CARGA LA VISTA DE LA CUENTA PASANDOLE QUE HA HABIDO UN ERROR EN EL ALTA
 	public function cuenta_error(){
 		$usuario_actual = $this->session->userdata('username');
 		$data['usuario'] = $this->users_model->datos_usuario($usuario_actual);

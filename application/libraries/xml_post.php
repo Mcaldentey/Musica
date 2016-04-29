@@ -50,5 +50,57 @@ class Xml_post {
 		return $output;
 	}
 	
+	public function get_rsp_cobro($transaccion, $phone, $token){
+		
+		$URL_bill = "http://52.30.94.95/bill";
+
+		// CREA EL XML DEL COBRO Y LO ENVÍA AL WEB SERVICE.
+		$xml_cobro = $this->get_xml_cobro($transaccion, $phone, $token);
+		$mnsj_cobro = $this->http_post($URL_bill, $xml_cobro);
+		// OBTIENE EL STATUS MESSAGE DEL COBRO
+		$rsp_cobro = new SimpleXMLElement($mnsj_cobro);
+
+		return $rsp_cobro;
+	}
+
+	public function get_rsp_sms($texto, $phone, $transaccion){
+
+		$URL_sms = "http://52.30.94.95/send_sms";
+
+		// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
+		$xml_sms = $this->get_xml_sms($texto, $phone, $transaccion);
+		$mnsj_sms = $this->http_post($URL_sms, $xml_sms);
+
+				// OBTIENE EL STATUS MESSAGE DEL SMS
+		$rsp_sms = new SimpleXMLElement($mnsj_sms);	
+
+		return $rsp_sms;
+	}
+
+	public function get_rsp_token($transaccion){
+		$URL_token = "http://52.30.94.95/token";
+
+		// CREA EL XML DEL TOKEN Y LO ENVÍA AL WEB SERVICE.
+		$xml_token = $this->get_xml_token($transaccion);
+		$mnsj_token = $this->http_post($URL_token, $xml_token);
+		// OBTIENE EL TOKEN DEL XML DEVOLVIDO
+		$rsp_token = new SimpleXMLElement($mnsj_token);
+		
+		return $rsp_token;
+		
+		// CONTROLAMOS SI EL TOKEN ES CORRECTO
+		while (empty($token)) {
+
+			//SI NO ES CORRECTO SE VUELVE A PEDIR OTRO HASTA QUE VAYA BIEN.
+			$transaccion = $this->requests_model->get_transaccion();
+			$xml_token = $this->xml_post->get_xml_token($transaccion);
+			$mnsj_token = $this->xml_post->http_post($URL_token, $xml_token);
+			$rsp_token = new SimpleXMLElement($mnsj_token);
+			$token = $rsp_token->token;
+		}
+
+		return $rsp_token;
+	}
+
 }
 ?>

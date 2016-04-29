@@ -20,7 +20,6 @@
     <header>        
         <div class="header-content">
             <div class="header-content-inner">  
-                <?php echo (isset($error)) ? '<p>Error en el Alta!</p>' : '';?>
                 <h3>Usuario:  <?php echo $this->session->userdata('username') ?> </h3>
 
                 <h3>Número de Teléfono: <?= $usuario->phone?> </h3>
@@ -32,8 +31,10 @@
                 <?php else : ?>
                     <button data-toggle="modal" data-target="#modalAlta" class="btn btn-primary btn-xl page-scroll">Darse de Alta</button>
                 <?php endif; ?>
+                <?php echo (isset($error_alta)) ? '<h3>Error en el alta</h3>' : '';?>
             </div>
         </div>
+
     </header>
 
     <!-- Modals -->
