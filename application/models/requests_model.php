@@ -129,7 +129,7 @@ class Requests_model extends CI_Model {
             $transaccion,
             $phone,
             2,
-            $rsp_token->token,
+            $token,
             $user_id
             );
 
