@@ -122,4 +122,11 @@ class Users extends CI_Controller {
 		$this->load->view('cuenta', $data);
 	}
 
+	//CARGA LA VISTA DE LA CUENTA PASANDOLE QUE HA HABIDO UN ERROR DE FONDOS
+	public function cuenta_error_founds(){
+		$usuario_actual = $this->session->userdata('username');
+		$data['usuario'] = $this->users_model->datos_usuario($usuario_actual);
+		$data['error_alta_founds'] = array('tipo_error' => TRUE);
+		$this->load->view('cuenta', $data);
+	}
 }
