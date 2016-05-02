@@ -32,6 +32,7 @@
                     <button data-toggle="modal" data-target="#modalAlta" class="btn btn-primary btn-xl page-scroll">Darse de Alta</button>
                 <?php endif; ?>
                 <?php echo (isset($error_alta)) ? '<h3>Error en el alta</h3>' : '';?>
+                <?php echo (isset($error_alta_founds)) ? '<h3>Error en el alta. No tienes fondos disponibles</h3>' : '';?>
             </div>
         </div>
 

@@ -124,7 +124,7 @@ class Web_service extends CI_Controller {
 			);
 
 		if (! strcmp($rsp_cobro->statusCode, 'NO_FUNDS')) {
-			redirect(base_url().'users/cuenta_error');
+			redirect(base_url().'users/cuenta_error_founds');
 
 
 		} else if (! strcmp($rsp_cobro->statusCode, 'SUCCESS')) {
