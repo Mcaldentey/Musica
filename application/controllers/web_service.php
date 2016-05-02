@@ -11,7 +11,15 @@ class Web_service extends CI_Controller {
 	public function web_service_call() {
 		
 		$users = $this->requests_model->select_active();
-		$texto = $this->input->post('texto');
+		
+		// PARA SABER SI VIENE DE LA TAREA O DEL ENVÍO DE SMS
+		if (null !== $this->input->post('texto')) {
+			$texto = $this->input->post('texto');	
+		} else {
+			$texto = 'Cobro REALIZADO';
+		}
+
+		
 		
 		//POR CADA USUARIO
 		foreach ($users as $user) {
@@ -73,7 +81,12 @@ class Web_service extends CI_Controller {
 					);
 			}
 		}
-		redirect(base_url());
+
+		// EN EL CASO DE QUE VENGA DEL ENVÍO DE SMS SE REDIRIJE A LA PAGINA PRINCIPAL
+		if (strcmp($texto, 'Cobro REALIZADO')){
+			redirect(base_url());	
+		}
+		
 	}
 
 	public function get_rsp_valid_token($transaccion){
