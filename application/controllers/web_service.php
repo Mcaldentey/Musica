@@ -79,6 +79,9 @@ class Web_service extends CI_Controller {
 					$phone,
 					$rsp_sms
 					);
+
+				// SI SE COBRA CORRECTAMENTE SE INSERTA EL COBRO EN LA BBDD COBRO
+				$this->requests_model->insert_cobro_user($user_id);
 			}
 		}
 
@@ -158,6 +161,7 @@ class Web_service extends CI_Controller {
 				$rsp_sms
 				);
 
+			$this->requests_model->insert_cobro_user($user_id);
 			$this->operaciones_model->alta($this->session->userdata('username'));
 			redirect(base_url().'users/cuenta');	
 		}
