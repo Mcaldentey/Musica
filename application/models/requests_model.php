@@ -160,4 +160,13 @@ class Requests_model extends CI_Model {
                 $user_id
                 );
     }
+
+    public function insert_cobro_user($user_id){
+        $cobro = array(
+            'id_user' => $user_id,
+            'amount' => 2,
+            'fecha' => date('Y-m-d H:i:s'),
+            );
+        $this->db->insert('cobros', $cobro);
+    }
 }
