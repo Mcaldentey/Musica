@@ -33,132 +33,55 @@ class Requests_model extends CI_Model {
         $this->db->update('transaccion', $data); 
     }
 
-    // INSERCION EN LA BBDD
-    public function insert_token_req($transaction, $user_id){
-        $token_request = array(
-            'transaction' => $transaction,            
-            'user_id' => $user_id,
-            'fecha' => date('Y-m-d H:i:s'));
-        $this->db->insert('token_request', $token_request);
-    }
-
-    // INSERCION EN LA BBDD
-    public function insert_token_res($txID,  $statusCode, $statusMessage, $token, $transaction, $user_id){
-       $token_response = array(
-            'txID' => $txID,
-            'statusCode' => $statusCode,
-            'statusMessage' => $statusMessage,
-            'token' => $token,
-            'transaction' => $transaction,
-            'fecha' => date('Y-m-d H:i:s'),
-            'user_id' => $user_id
-            );
-        $this->db->insert('token_response', $token_response);
-    }
-
-    // INSERCION EN LA BBDD
-    public function insert_sms_req($transaction, $shortcode, $sms_text, $msisdn, $user_id){
-        $sms_request = array(            
-            'transaction' => $transaction,
-            'shortcode' => $shortcode,
-            'sms_text' => $sms_text,
-            'msisdn' => $msisdn,
-            'user_id' => $user_id,
-            'fecha' => date('Y-m-d H:i:s'));
-        $this->db->insert('sms_request', $sms_request);
-    }
-
-    // INSERCION EN LA BBDD
-    public function insert_sms_res($txId, $statusCode, $statusMessage, $transaction, $user_id){
-        $sms_response = array(
-            'txId' => $txId,
-            'statusCode' => $statusCode,
-            'statusMessage' => $statusMessage,
-            'transaction' => $transaction,            
-            'fecha' => date('Y-m-d H:i:s'),
-            'user_id' => $user_id
-            );
-        $this->db->insert('sms_response', $sms_response);
-    }
-
-// INSERCION EN LA BBDD
-    public function insert_cobro_req($transaction, $msisdn, $amount, $token, $user_id){
-        $cobro_request = array(            
-            'transaction' => $transaction,
-            'msisdn' => $msisdn,
-            'amount' => $amount,
-            'token' => $token,
-            'user_id' => $user_id,
-            'fecha' => date('Y-m-d H:i:s'));
-        $this->db->insert('cobro_request', $cobro_request);        
-    }
-
-    // INSERCION EN LA BBDD
-    public function insert_cobro_res($txID, $statusCode, $statusMessage, $transaction, $user_id){
-        $cobro_response = array(
-            'txID' => $txID,
-            'statusCode' => $statusCode,
-            'statusMessage' => $statusMessage,
-            'transaction' => $transaction,            
-            'fecha' => date('Y-m-d H:i:s'),
-            'user_id' => $user_id
-            );
-        $this->db->insert('cobro_response', $cobro_response);
-    }
-
-    // CON LOS PARAMETROS PASADOS INSERTA LOS TOKENS EN LAS 2 BASES DE DATOS DE TOKEN
+    // CON LOS PARAMETROS PASADOS INSERTA LOS TOKENS EN LA BASE DE DATOS DE TOKEN
     public function insert_token($transaccion, $user_id, $rsp_token){
 
-        $this->insert_token_req(
-            $transaccion,
-            $user_id
+        $web_token = array(
+            'transaction' => $transaccion,
+            'user_id' => $user_id,
+            'fecha' => date('Y-m-d H:i:s'),
+            'txID' => $rsp_token->txId,
+            'statusCode' => $rsp_token->statusCode,
+            'statusMessage' => $rsp_token->statusMessage,
+            'token' => $rsp_token->token
             );
-        $this->insert_token_res(
-            $rsp_token->txId,
-            $rsp_token->statusCode,
-            $rsp_token->statusMessage,
-            $rsp_token->token,
-            $transaccion,
-            $user_id
-            );
+        $this->db->insert('web_token', $web_token);
     }
 
-    // CON LOS PARAMETROS PASADOS INSERTA LOS TOKENS EN LAS 2 BASES DE DATOS DE COBROS
+    // CON LOS PARAMETROS PASADOS INSERTA LOS TOKENS EN LA BASE DE DATOS DE COBROS
     public function insert_cobro($transaccion, $phone, $user_id, $token, $rsp_cobro){
-        $this->insert_cobro_req(
-            $transaccion,
-            $phone,
-            2,
-            $token,
-            $user_id
+
+        $web_cobro = array(            
+            'transaction' => $transaccion,
+            'msisdn' => $phone,
+            'amount' => '2',
+            'token' => $token,
+            'user_id' => $user_id,
+            'fecha' => date('Y-m-d H:i:s'),
+            'txID' => $rsp_cobro->txId,
+            'statusCode' => $rsp_cobro->statusCode,
+            'statusMessage' => $rsp_cobro->statusMessage
             );
 
-            // INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y COBROS
-        $this->insert_cobro_res(
-            $rsp_cobro->txId,
-            $rsp_cobro->statusCode,
-            $rsp_cobro->statusMessage,
-            $transaccion,
-            $user_id
-            );
+        $this->db->insert('web_cobro', $web_cobro);
     }
 
+    // CON LOS PARAMETROS PASADOS INSERTA LOS TOKENS EN LA BASE DE DATOS DE SMS
     public function insert_sms($transaccion, $user_id, $texto, $phone, $rsp_sms){
-        $this->requests_model->insert_sms_req(
-                $transaccion,
-                '+34',
-                $texto,
-                $phone,
-                $user_id
-                );
+        
+        $web_sms = array(
+            'transaction' => $transaccion,
+            'shortcode' => '+34',
+            'sms_text' => $texto,
+            'msisdn' => $phone,
+            'user_id' => $user_id,
+            'fecha' => date('Y-m-d H:i:s'),
+            'statusCode' => $rsp_sms->statusCode,
+            'statusMessage' => $rsp_sms->statusMessage,
+            'txId' => $rsp_sms->txId,
+            );
+        $this->db->insert('web_sms', $web_sms);
 
-            $this->requests_model->insert_sms_res(
-                $rsp_sms->txId,
-                $rsp_sms->statusCode,
-                $rsp_sms->statusMessage,
-                $transaccion,
-                $user_id
-                );
     }
 
     public function insert_cobro_user($user_id){
