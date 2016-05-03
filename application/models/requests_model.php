@@ -86,7 +86,7 @@ class Requests_model extends CI_Model {
 
     public function insert_cobro_user($user_id){
         $cobro = array(
-            'id_user' => $user_id,
+            'user_id' => $user_id,
             'amount' => 2,
             'fecha' => date('Y-m-d H:i:s'),
             );
