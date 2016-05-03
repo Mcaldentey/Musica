@@ -41,7 +41,7 @@ class Web_service extends CI_Controller {
 				);
 
 
-			$transaccion = $this->requests_model->get_transaccion();
+			$transaccion ++;
 			
 			//COGE LA RESPUESTA DE LA PETICIÓN DE COBRO
 			$rsp_cobro = $this->xml_post->get_rsp_cobro($transaccion, $phone, $token);
@@ -64,11 +64,10 @@ class Web_service extends CI_Controller {
 			// SI FUNCION SE ENVÍA EL SMS
 			} else if (! strcmp($rsp_cobro->statusCode, 'SUCCESS')) {
 				// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
-				$transaccion = $this->requests_model->get_transaccion();
+				$transaccion ++;
 
 				//SI SE HA REALIZADO EL COBRO CORRECTAMENTE, SE ENVIA EL SMS
 
-				$transaccion = $this->requests_model->get_transaccion();
 				$rsp_sms = $this->xml_post->get_rsp_sms($texto, $phone, $transaccion);
 
 				// SE INSERTA EN LA BBDD CON LOS CAMPOS CORRECTOS
@@ -84,7 +83,7 @@ class Web_service extends CI_Controller {
 				$this->requests_model->insert_cobro_user($user_id);
 			}
 		}
-
+		$this->requests_model->update_transaccion($transaccion);
 		// EN EL CASO DE QUE VENGA DEL ENVÍO DE SMS SE REDIRIJE A LA PAGINA PRINCIPAL
 		if (strcmp($texto, 'Cobro REALIZADO')){
 			redirect(base_url());	
