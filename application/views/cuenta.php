@@ -23,7 +23,11 @@
                 <h3>Usuario:  <?php echo $this->session->userdata('username') ?> </h3>
 
                 <h3>Número de Teléfono: <?= $usuario->phone?> </h3>
-                <button data-toggle="modal" data-target="#modalTelefono" class="btn btn-primary btn-xl page-scroll">Cambiar número</button>
+                <?php if ( ! $usuario->active) : ?>
+                    <button data-toggle="modal" data-target="#modalTelefono" class="btn btn-primary btn-xl page-scroll">Cambiar número</button>
+                <?php else : ?>
+                    <h3>No se puede cambiar el número de teléfono mientras se está de alta</h3>
+                <?php endif; ?>
 
                 <h3>Servicios</h3>
                 <?php if ($usuario->active) : ?>                    
