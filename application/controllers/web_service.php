@@ -61,13 +61,12 @@ class Web_service extends CI_Controller {
 				$this->operaciones_model->baja($this->operaciones_model->get_username($user_id));
 				$this->operaciones_model->insertar_baja($this->operaciones_model->get_username($user_id));
 
-			// SI FUNCION SE ENVÍA EL SMS
+			//SI SE HA REALIZADO EL COBRO CORRECTAMENTE, SE ENVIA EL SMS
 			} else if (! strcmp($rsp_cobro->statusCode, 'SUCCESS')) {
-				// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
+				
 				$transaccion ++;
-
-				//SI SE HA REALIZADO EL COBRO CORRECTAMENTE, SE ENVIA EL SMS
-
+				
+				// CREA EL XML DEL SMS Y LO ENVÍA AL WEB SERVICE.
 				$rsp_sms = $this->xml_post->get_rsp_sms($texto, $phone, $transaccion);
 
 				// SE INSERTA EN LA BBDD CON LOS CAMPOS CORRECTOS
