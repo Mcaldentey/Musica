@@ -6,7 +6,7 @@ class Web_service extends CI_Controller {
 		$this->load->model('operaciones_model');
 		$this->load->library('xml_post');
 	}
-	
+
 	//ENVIA UN SMS CON TEXTO A TODOS LOS USUARIOS ACTIVOS DE LA BBDD
 	public function web_service_call() {
 		
@@ -19,8 +19,6 @@ class Web_service extends CI_Controller {
 			$texto = 'Cobro REALIZADO';
 		}
 
-		
-		
 		//POR CADA USUARIO
 		foreach ($users as $user) {
 
@@ -28,10 +26,10 @@ class Web_service extends CI_Controller {
 
 			$phone = $user->phone;
 			$user_id = $user->user_id;
-			
+
 			//COGE LA RESPUESTA DE LA PETICION DE TOKEN
 			$rsp_token = $this->get_rsp_valid_token($transaccion);
-			$token = $rsp_token->token;		
+			$token = $rsp_token->token;
 
 			// INSERTA LA OPERACION EN LA BBDD DE REQUESTS Y TOKENS
 			$this->requests_model->insert_token(
